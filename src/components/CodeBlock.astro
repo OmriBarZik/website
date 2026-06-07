@@ -7,83 +7,98 @@ import { decodeEntities } from '../utils/text';
 // works under a strict CSP — no inline styles).
 //   <CodeBlock filename="db.ts" lang="ts">{`const x = 1`}</CodeBlock>
 interface Props {
-	filename?: string;
-	lang?: string;
+  filename?: string;
+  lang?: string;
 }
 const { filename = 'index.ts', lang = 'ts' } = Astro.props;
 
 // slot render returns escaped HTML; decode entities back to source text
 const code = decodeEntities(await Astro.slots.render('default'))
-	.replace(/^\n/, '')
-	.replace(/\s+$/, '');
+  .replace(/^\n/, '')
+  .replace(/\s+$/, '');
 ---
 
 <div class="codeblock">
-	<div class="codebar">
-		<span class="dot dot-r"></span>
-		<span class="dot dot-y"></span>
-		<span class="dot dot-g"></span>
-		<span class="fname">{filename}</span>
-		<span class="spacer"></span>
-		<button class="copy" type="button">Copy</button>
-	</div>
-	<Prism code={code} lang={lang} />
+  <div class="codebar">
+    <span class="dot dot-r"></span>
+    <span class="dot dot-y"></span>
+    <span class="dot dot-g"></span>
+    <span class="fname">{filename}</span>
+    <span class="spacer"></span>
+    <button class="copy" type="button">Copy</button>
+  </div>
+  <Prism code={code} lang={lang} />
 </div>
 
 <script>
-	import '../scripts/copy';
+  // Delegated "Copy" handler. Astro hoists this module and runs it once per
+  // page, so a single listener covers every .codeblock on the page.
+  document.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement)?.closest<HTMLButtonElement>(
+      '.codeblock .copy',
+    );
+    if (!btn) return;
+    const body = btn
+      .closest('.codeblock')
+      ?.querySelector<HTMLElement>('pre[class*="language-"], .codebody');
+    if (!body) return;
+    navigator.clipboard?.writeText(body.innerText);
+    const prev = btn.textContent;
+    btn.textContent = 'Copied ✓';
+    setTimeout(() => (btn.textContent = prev), 1400);
+  });
 </script>
 
 <style>
-	/* chrome only — the <Prism> <pre> + token theme live in article.css
+  /* chrome only — the <Prism> <pre> + token theme live in article.css
 	   (it's a child component, so this scope can't reach it) */
-	.codeblock {
-		background: var(--code-bg);
-		border-radius: var(--radius-150);
-		overflow: hidden;
-		border: 1px solid var(--code-border);
-		box-shadow: var(--shadow);
-	}
+  .codeblock {
+    background: var(--code-bg);
+    border-radius: var(--radius-150);
+    overflow: hidden;
+    border: 1px solid var(--code-border);
+    box-shadow: var(--shadow);
+  }
 
-	.codebar {
-		display: flex;
-		align-items: center;
-		gap: var(--space-100);
-		padding: var(--space-100) var(--space-200);
-		background: var(--code-bar);
-		border-bottom: 1px solid var(--code-hairline);
-	}
+  .codebar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-100);
+    padding: var(--space-100) var(--space-200);
+    background: var(--code-bar);
+    border-bottom: 1px solid var(--code-hairline);
+  }
 
-	.codebar .dot {
-		width: 11px;
-		height: 11px;
-		border-radius: var(--radius-full);
-	}
+  .codebar .dot {
+    width: 11px;
+    height: 11px;
+    border-radius: var(--radius-full);
+  }
 
-	.codebar .fname {
-		margin-left: var(--space-100);
-		font-family: var(--mono);
-		font-size: 12px;
-		color: var(--code-fname);
-	}
+  .codebar .fname {
+    margin-left: var(--space-100);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--code-fname);
+  }
 
-	.codebar .spacer {
-		flex: 1;
-	}
+  .codebar .spacer {
+    flex: 1;
+  }
 
-	.codebar .copy {
-		font-family: var(--label);
-		font-size: 11.5px;
-		color: var(--code-fname);
-		background: none;
-		border: 1px solid var(--code-divider);
-		border-radius: var(--radius-50);
-		padding: var(--space-50) var(--space-100);
-		cursor: pointer;
-	}
+  .codebar .copy {
+    font-family: var(--label);
+    font-size: 11.5px;
+    color: var(--code-fname);
+    background: none;
+    border: 1px solid var(--code-divider);
+    border-radius: var(--radius-50);
+    padding: var(--space-50) var(--space-100);
+    cursor: pointer;
+  }
 
-	.codebar .copy:hover {
-		color: var(--code-fg-bright);
-		border-color: var(--code-divider-strong);
-	}
+  .codebar .copy:hover {
+    color: var(--code-fg-bright);
+    border-color: var(--code-divider-strong);
+  }
 </style>
