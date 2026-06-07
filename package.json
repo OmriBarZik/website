@@ -1,17 +1,19 @@
 {
   "name": "website",
-  "type": "module",
   "version": "0.0.1",
-  "engines": {
-    "node": ">=22.12.0"
-  },
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "lint:css": "stylelint \"src/**/*.{css,astro,svelte}\"",
-    "lint:css:fix": "stylelint \"src/**/*.{css,astro,svelte}\" --fix"
+    "lint:css:fix": "stylelint \"src/**/*.{css,astro,svelte}\" --fix",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/markdown-remark": "^7.2.0",
@@ -29,10 +31,27 @@
     "svelte": "^5.56.1"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/prismjs": "^1.26.6",
+    "eslint": "^10.4.1",
+    "eslint-plugin-astro": "^1.7.0",
+    "eslint-plugin-svelte": "^3.19.0",
+    "globals": "^17.6.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.7",
     "postcss-html": "^1.8.1",
+    "prettier": "^3.8.3",
     "stylelint": "^17.13.0",
     "stylelint-config-html": "^1.1.0",
-    "stylelint-config-standard": "^40.0.0"
+    "stylelint-config-standard": "^40.0.0",
+    "svelte-eslint-parser": "^1.8.0",
+    "typescript-eslint": "^8.60.1"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs,astro,svelte}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,astro,svelte}": "stylelint --fix"
   }
 }

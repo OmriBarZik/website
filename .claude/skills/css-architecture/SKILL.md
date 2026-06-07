@@ -13,17 +13,17 @@ Architecture" article, adapted for this **Astro + Svelte** project (no Sass).
 Every rule lives in exactly one layer. Decide top-down — use the most local home
 that fits.
 
-| Layer | Lives in | Holds | Scope |
-| ----- | -------- | ----- | ----- |
-| **Tokens** | `src/styles/tokens.css` | design tokens (`:root` custom properties) | global |
-| **Reset / base** | `src/styles/base.css` | reset, base element styles, the decorative wash, **shared primitives**: `.wrap`, `.btn*`, `.tag*`, `.kicker`, `.mono`, `.icon-btn`, `.brand`, dot colors, `.ph` | global |
-| **Layout (app shell)** | `src/styles/layout.css` | `.site-header`, `.site-footer`, `.section`, `.sec-head` | global |
-| **Article/reading** | `src/styles/article.css` | prose, TOC, pager, Prism theme — imported **only** by `PostLayout`/`about` | per-template |
-| **Component** | the component's own scoped `<style>` | everything specific to one component (`.feat-card`, `.sandbox`, `.subscribe`, …) | scoped |
-| **Page** | the page's scoped `<style>` | one-off styles for one route (`.hero`, `.demo-grid`, …) | scoped |
+| Layer                  | Lives in                             | Holds                                                                                                                                                           | Scope        |
+| ---------------------- | ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| **Tokens**             | `src/styles/tokens.css`              | design tokens (`:root` custom properties)                                                                                                                       | global       |
+| **Reset / base**       | `src/styles/base.css`                | reset, base element styles, the decorative wash, **shared primitives**: `.wrap`, `.btn*`, `.tag*`, `.kicker`, `.mono`, `.icon-btn`, `.brand`, dot colors, `.ph` | global       |
+| **Layout (app shell)** | `src/styles/layout.css`              | `.site-header`, `.site-footer`, `.section`, `.sec-head`                                                                                                         | global       |
+| **Article/reading**    | `src/styles/article.css`             | prose, TOC, pager, Prism theme — imported **only** by `PostLayout`/`about`                                                                                      | per-template |
+| **Component**          | the component's own scoped `<style>` | everything specific to one component (`.feat-card`, `.sandbox`, `.subscribe`, …)                                                                                | scoped       |
+| **Page**               | the page's scoped `<style>`          | one-off styles for one route (`.hero`, `.demo-grid`, …)                                                                                                         | scoped       |
 
 **Rule of thumb:** if a class appears in exactly one component/page, its styles
-go *in that component/page*. If it's reused across many (a button, a tag, the
+go _in that component/page_. If it's reused across many (a button, a tag, the
 container width), it's a primitive → `base.css`. Default to local; promote to
 global only when genuinely shared. This is Elad's partials model
 (elements → components → pages), expressed through Astro/Svelte scoped styles
@@ -39,7 +39,7 @@ instead of Sass files + BEM.
   - `e-` entity (a variant; at most one per element).
   - `p-` page (on `<body>`/wrapper) for page-specific overrides.
   - `js-` JS hook only — **never** styled.
-- Scoped component styles don't need namespacing prefixes — the scope *is* the
+- Scoped component styles don't need namespacing prefixes — the scope _is_ the
   namespace.
 
 ## Color tokens (three tiers)
@@ -50,7 +50,7 @@ All colors live in `tokens.css`. Components reference **only tier 2**.
    the neutrals (`--paper*`, `--ink`/`--ink-soft`/`--muted`/`--faint`, `--line*`),
    and the code/terminal palette (`--code-*`, `--term-*`, `--syntax-*`).
    Referenced only by tier 2.
-2. **Tier 2 · semantic roles** — what a color *means*: `--primary` /
+2. **Tier 2 · semantic roles** — what a color _means_: `--primary` /
    `--primary-strong` / `--primary-soft`, `--secondary*`, `--text-heading` /
    `--text-body` / `--text-soft` / `--text-muted` / `--text-faint` / `--text-link`,
    `--surface` / `--surface-raised` / `--surface-sunken` / `--surface-invert`,
@@ -79,7 +79,7 @@ Tints/translucency via `color-mix(in oklab, var(--role) N%, transparent)`.
 
 - Keep specificity **low and flat**. Avoid long descendant chains and `#id`
   styling. One class is usually enough.
-- Astro/Svelte **scoped** styles are *unlayered* and slightly higher specificity
+- Astro/Svelte **scoped** styles are _unlayered_ and slightly higher specificity
   (scope attribute), so they cleanly beat global `base`/`layout` rules without
   `!important`. Lean on that instead of specificity hacks.
 - For greenfield global CSS, order with **cascade layers** so later concerns win
@@ -101,7 +101,7 @@ those, namespace under a static root class with `:global()`:
 </style>
 ```
 
-`:global()` *unqualified* leaks site-wide — always anchor it to the component's
+`:global()` _unqualified_ leaks site-wide — always anchor it to the component's
 root class.
 
 ## This project's hard constraints

@@ -12,17 +12,19 @@ The whole game with Docker layer caching is **ordering things from least to most
 
 ## Copy the manifest before the source
 
-This is the entire trick. Copy `package*.json`, install, *then* copy the rest:
+This is the entire trick. Copy `package*.json`, install, _then_ copy the rest:
 
 <CodeBlock filename="Dockerfile" lang="docker">{`# ---- builder ----
 FROM node:22-alpine AS builder
 WORKDIR /app
 
 # changes weekly → cached across most builds
-COPY package*.json ./
+
+COPY package\*.json ./
 RUN npm ci
 
 # changes every commit → only this layer rebuilds
+
 COPY . .
 RUN npm run build`}</CodeBlock>
 
@@ -37,7 +39,7 @@ FROM node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 
-COPY package*.json ./
+COPY package\*.json ./
 RUN npm ci --omit=dev
 COPY --from=builder /app/dist ./dist
 
@@ -50,32 +52,36 @@ The final image carries production deps and compiled JS — nothing else. Watch 
   prompt="~/app $"
   title="multi-stage build"
   hint="docker build -t app ."
-  intro={["[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]"]}
+  intro={[
+    "[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]",
+  ]}
   demo="docker build -t app ."
   commands={{
-    "docker build -t app .": [
-      "[muted]=> [internal] load build definition[/muted]",
-      "[muted]=> [builder 1/4] FROM node:22-alpine[/muted]",
-      "[muted]=> CACHED [builder 2/4] COPY package*.json ./[/muted]",
-      "[muted]=> CACHED [builder 3/4] RUN npm ci[/muted]",
-      "[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]",
-      "[muted]=> [runtime 3/3] COPY --from=builder /app/dist ./dist[/muted]",
-      "[ok]✓ built app:latest  ·  final image 78MB[/ok]"
+    'docker build -t app .': [
+      '[muted]=> [internal] load build definition[/muted]',
+      '[muted]=> [builder 1/4] FROM node:22-alpine[/muted]',
+      '[muted]=> CACHED [builder 2/4] COPY package*.json ./[/muted]',
+      '[muted]=> CACHED [builder 3/4] RUN npm ci[/muted]',
+      '[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]',
+      '[muted]=> [runtime 3/3] COPY --from=builder /app/dist ./dist[/muted]',
+      '[ok]✓ built app:latest  ·  final image 78MB[/ok]',
     ],
-    "docker images": [
-      "REPOSITORY   TAG      SIZE",
-      "app          latest   78MB",
-      "node         22-alpine  142MB"
+    'docker images': [
+      'REPOSITORY   TAG      SIZE',
+      'app          latest   78MB',
+      'node         22-alpine  142MB',
     ],
-    "docker run -p 3000:3000 app": ["[ok]→ server listening on :3000[/ok]"],
-    "ls": ["Dockerfile  .dockerignore  src  package.json  tsconfig.json"]
+    'docker run -p 3000:3000 app': ['[ok]→ server listening on :3000[/ok]'],
+    ls: ['Dockerfile  .dockerignore  src  package.json  tsconfig.json'],
   }}
 />
 
 <Callout kind="note" mark="Tip">
-Add a `.dockerignore` with `node_modules` and `dist`. Otherwise `COPY . .` drags your host’s `node_modules` into the image and silently busts the cache you just worked to build.
+  Add a `.dockerignore` with `node_modules` and `dist`. Otherwise `COPY . .`
+  drags your host’s `node_modules` into the image and silently busts the cache
+  you just worked to build.
 </Callout>
 
 ## The payoff
 
-A clean dependency layer plus a slim runtime stage gets you fast incremental builds *and* a small, attack-surface-minimal image. The Docker output above is illustrative — but the layer ordering is the real, load-bearing idea.
+A clean dependency layer plus a slim runtime stage gets you fast incremental builds _and_ a small, attack-surface-minimal image. The Docker output above is illustrative — but the layer ordering is the real, load-bearing idea.

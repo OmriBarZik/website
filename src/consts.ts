@@ -3,6 +3,6 @@
 
 export const SITE_TITLE = 'fake frontend';
 export const SITE_DESCRIPTION =
-	'The notebook of a backend engineer — slow, careful guides on TypeScript, Docker and Node.js, where every example runs in a sandbox right on the page.';
+  'The notebook of a backend engineer — slow, careful guides on TypeScript, Docker and Node.js, where every example runs in a sandbox right on the page.';
 
 export const TOPICS = ['TypeScript', 'Docker', 'Node.js'] as const;

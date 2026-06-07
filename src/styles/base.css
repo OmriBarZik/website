@@ -10,271 +10,271 @@
 *,
 *::before,
 *::after {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 html {
-	-webkit-font-smoothing: antialiased;
-	text-rendering: optimizelegibility;
-	scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizelegibility;
+  scroll-behavior: smooth;
 }
 
 body {
-	margin: 0;
-	background: var(--surface);
-	color: var(--text-body);
-	font-family: var(--serif);
-	font-size: 18px;
-	line-height: 1.6;
-	font-optical-sizing: auto;
+  margin: 0;
+  background: var(--surface);
+  color: var(--text-body);
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  font-optical-sizing: auto;
 }
 
 ::selection {
-	background: color-mix(in oklab, var(--primary) 18%, transparent);
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
 }
 
 img {
-	max-width: 100%;
-	display: block;
+  max-width: 100%;
+  display: block;
 }
 
 a {
-	color: inherit;
-	text-decoration: none;
+  color: inherit;
+  text-decoration: none;
 }
 
 /* decorative radial wash — fixed, behind everything */
 body::before {
-	content: '';
-	position: fixed;
-	inset: 0;
-	z-index: 0;
-	pointer-events: none;
-	background:
-		radial-gradient(
-			900px 520px at 88% -6%,
-			color-mix(in oklab, var(--primary) 5%, transparent),
-			transparent 60%
-		),
-		radial-gradient(
-			700px 500px at 0% 100%,
-			color-mix(in oklab, var(--secondary) 5%, transparent),
-			transparent 55%
-		);
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      900px 520px at 88% -6%,
+      color-mix(in oklab, var(--primary) 5%, transparent),
+      transparent 60%
+    ),
+    radial-gradient(
+      700px 500px at 0% 100%,
+      color-mix(in oklab, var(--secondary) 5%, transparent),
+      transparent 55%
+    );
 }
 
 .page {
-	position: relative;
-	z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 /* ---------- text / layout primitives ---------- */
 .wrap {
-	max-width: var(--wrap);
-	margin: 0 auto;
-	padding: 0 var(--space-400);
+  max-width: var(--wrap);
+  margin: 0 auto;
+  padding: 0 var(--space-400);
 }
 
 .label {
-	font-family: var(--label);
+  font-family: var(--label);
 }
 
 .mono {
-	font-family: var(--mono);
+  font-family: var(--mono);
 }
 
 .kicker {
-	font-family: var(--label);
-	text-transform: uppercase;
-	letter-spacing: 0.2em;
-	font-size: 11px;
-	font-weight: 600;
-	color: var(--primary);
+  font-family: var(--label);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--primary);
 }
 
 .rule {
-	height: 1px;
-	background: var(--border);
-	border: 0;
-	margin: 0;
+  height: 1px;
+  background: var(--border);
+  border: 0;
+  margin: 0;
 }
 
 /* ---------- brand wordmark (header + footer) ---------- */
 .brand {
-	font-family: var(--label);
-	font-weight: 700;
-	font-size: 21px;
-	letter-spacing: -0.02em;
-	display: inline-flex;
-	align-items: baseline;
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: -0.02em;
+  display: inline-flex;
+  align-items: baseline;
 }
 
 .brand .dot {
-	color: var(--primary);
+  color: var(--primary);
 }
 
 /* ---------- circular icon button (header + TOC share) ---------- */
 .icon-btn {
-	width: 36px;
-	height: 36px;
-	border-radius: var(--radius-full);
-	border: 1px solid var(--border-strong);
-	background: var(--surface-raised);
-	display: grid;
-	place-items: center;
-	cursor: pointer;
-	color: var(--text-soft);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-strong);
+  background: var(--surface-raised);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--text-soft);
 }
 
 .icon-btn:hover {
-	border-color: var(--text-body);
-	color: var(--text-body);
+  border-color: var(--text-body);
+  color: var(--text-body);
 }
 
 /* ---------- buttons ---------- */
 .btn {
-	font-family: var(--label);
-	font-size: 14px;
-	font-weight: 600;
-	padding: var(--space-150) var(--space-200);
-	border-radius: var(--radius-100);
-	border: 1px solid transparent;
-	cursor: pointer;
-	display: inline-flex;
-	align-items: center;
-	gap: var(--space-100);
-	transition:
-		transform var(--duration-fast) var(--ease),
-		background var(--duration-normal) var(--ease),
-		box-shadow var(--duration-normal) var(--ease),
-		border-color var(--duration-normal) var(--ease);
-	background: none;
-	color: var(--text-body);
-	line-height: 1;
-	white-space: nowrap;
+  font-family: var(--label);
+  font-size: 14px;
+  font-weight: 600;
+  padding: var(--space-150) var(--space-200);
+  border-radius: var(--radius-100);
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-100);
+  transition:
+    transform var(--duration-fast) var(--ease),
+    background var(--duration-normal) var(--ease),
+    box-shadow var(--duration-normal) var(--ease),
+    border-color var(--duration-normal) var(--ease);
+  background: none;
+  color: var(--text-body);
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .btn:active {
-	transform: translateY(1px);
+  transform: translateY(1px);
 }
 
 .btn-primary {
-	background: var(--primary);
-	color: var(--text-on-primary);
+  background: var(--primary);
+  color: var(--text-on-primary);
 }
 
 .btn-primary:hover {
-	background: var(--primary-strong);
+  background: var(--primary-strong);
 }
 
 .btn-ghost {
-	border-color: var(--border-strong);
-	color: var(--text-body);
-	background: var(--surface-raised);
+  border-color: var(--border-strong);
+  color: var(--text-body);
+  background: var(--surface-raised);
 }
 
 .btn-ghost:hover {
-	border-color: var(--text-body);
+  border-color: var(--text-body);
 }
 
 .btn-text {
-	padding: 0;
-	color: var(--text-link);
+  padding: 0;
+  color: var(--text-link);
 }
 
 .btn-text:hover {
-	color: var(--text-link-hover);
+  color: var(--text-link-hover);
 }
 
 .btn .arr {
-	transition: transform var(--duration-normal) var(--ease);
+  transition: transform var(--duration-normal) var(--ease);
 }
 
 .btn:hover .arr {
-	transform: translateX(3px);
+  transform: translateX(3px);
 }
 
 /* ---------- tags ---------- */
 .tag {
-	font-family: var(--label);
-	font-size: 11.5px;
-	font-weight: 500;
-	padding: var(--space-50) var(--space-150);
-	border-radius: var(--radius-pill);
-	border: 1px solid var(--border-strong);
-	color: var(--text-muted);
-	background: var(--surface-raised);
-	white-space: nowrap;
-	transition:
-		color var(--duration-normal) var(--ease),
-		border-color var(--duration-normal) var(--ease);
+  font-family: var(--label);
+  font-size: 11.5px;
+  font-weight: 500;
+  padding: var(--space-50) var(--space-150);
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--border-strong);
+  color: var(--text-muted);
+  background: var(--surface-raised);
+  white-space: nowrap;
+  transition:
+    color var(--duration-normal) var(--ease),
+    border-color var(--duration-normal) var(--ease);
 }
 
 a.tag:hover {
-	color: var(--text-link);
-	border-color: var(--text-link);
+  color: var(--text-link);
+  border-color: var(--text-link);
 }
 
 .tag.is-ts {
-	color: var(--topic-ts);
+  color: var(--topic-ts);
 }
 
 .tag.is-docker {
-	color: var(--topic-docker);
+  color: var(--topic-docker);
 }
 
 .tag.is-node {
-	color: var(--topic-node);
+  color: var(--topic-node);
 }
 
 /* ---------- image placeholder (warm diagonal-stripe block) ---------- */
 .ph {
-	background:
-		repeating-linear-gradient(
-			45deg,
-			color-mix(in oklab, var(--primary) 5%, transparent) 0 var(--space-150),
-			transparent var(--space-150) var(--space-300)
-		),
-		linear-gradient(135deg, var(--surface-sunken), var(--border-strong));
-	display: grid;
-	place-items: center;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      color-mix(in oklab, var(--primary) 5%, transparent) 0 var(--space-150),
+      transparent var(--space-150) var(--space-300)
+    ),
+    linear-gradient(135deg, var(--surface-sunken), var(--border-strong));
+  display: grid;
+  place-items: center;
 }
 
 .ph.r-16-8 {
-	aspect-ratio: 16 / 8;
+  aspect-ratio: 16 / 8;
 }
 
 .ph.r-16-9 {
-	aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 9;
 }
 
 .ph.r-21-9 {
-	aspect-ratio: 21 / 9;
+  aspect-ratio: 21 / 9;
 }
 
 .ph.r-4-3 {
-	aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 3;
 }
 
 .ph.r-1-1 {
-	aspect-ratio: 1 / 1;
+  aspect-ratio: 1 / 1;
 }
 
 /* ---------- traffic-light dots (code widgets + code block) ---------- */
 .dot-r {
-	background: var(--dot-red);
+  background: var(--dot-red);
 }
 
 .dot-y {
-	background: var(--dot-yellow);
+  background: var(--dot-yellow);
 }
 
 .dot-g {
-	background: var(--dot-green);
+  background: var(--dot-green);
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
-	}
+  html {
+    scroll-behavior: auto;
+  }
 }
