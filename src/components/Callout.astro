@@ -3,13 +3,13 @@
 //   <Callout mark="Why">Environment variables are an input boundary…</Callout>
 //   <Callout kind="note" mark="Tip">Keep the parser dependency-free…</Callout>
 interface Props {
-	kind?: 'default' | 'note';
-	mark?: string;
+  kind?: 'default' | 'note';
+  mark?: string;
 }
 const { kind = 'default', mark = 'Note' } = Astro.props;
 ---
 
 <div class:list={['callout', kind === 'note' && 'note']}>
-	<span class="mk">{mark}</span>
-	<div><slot /></div>
+  <span class="mk">{mark}</span>
+  <div><slot /></div>
 </div>

@@ -10,29 +10,31 @@ import SandboxIsland from './Sandbox.svelte';
 import { decodeEntities } from '../utils/text';
 
 interface Props {
-	filename?: string;
-	lang?: 'ts' | 'js';
-	badge?: string;
+  filename?: string;
+  lang?: 'ts' | 'js';
+  badge?: string;
 }
 const { filename = 'index.js', lang = 'js', badge } = Astro.props;
 const resolvedBadge = badge ?? (lang === 'ts' ? 'TS' : 'Node');
 
 // slot render returns HTML-escaped text; decode back to raw source, dedent.
 const raw = decodeEntities(await Astro.slots.render('default'))
-	.replace(/^\n/, '')
-	.replace(/\s+$/, '');
+  .replace(/^\n/, '')
+  .replace(/\s+$/, '');
 const dedent = (() => {
-	const lines = raw.split('\n');
-	const indents = lines.filter((l) => l.trim()).map((l) => l.match(/^ */)![0].length);
-	const n = indents.length ? Math.min(...indents) : 0;
-	return n > 0 ? lines.map((l) => l.slice(n)).join('\n') : raw;
+  const lines = raw.split('\n');
+  const indents = lines
+    .filter((l) => l.trim())
+    .map((l) => l.match(/^ */)![0].length);
+  const n = indents.length ? Math.min(...indents) : 0;
+  return n > 0 ? lines.map((l) => l.slice(n)).join('\n') : raw;
 })();
 ---
 
 <SandboxIsland
-	client:visible
-	filename={filename}
-	lang={lang}
-	badge={resolvedBadge}
-	code={dedent}
+  client:visible
+  filename={filename}
+  lang={lang}
+  badge={resolvedBadge}
+  code={dedent}
 />

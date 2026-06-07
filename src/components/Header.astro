@@ -1,34 +1,40 @@
 ---
 interface Props {
-	/** which nav item to mark active: 'latest' | 'sandboxes' | 'about' */
-	active?: string;
+  /** which nav item to mark active: 'latest' | 'sandboxes' | 'about' */
+  active?: string;
 }
 const { active } = Astro.props;
 ---
 
 <header class="site-header">
-	<div class="wrap bar">
-		<a class="brand" href="/">fake frontend<span class="dot">.</span></a>
-		<nav class="nav">
-			<a href="/#latest" class:list={[active === 'latest' && 'active']}>Latest</a>
-			<a href="/#playground" class:list={['hide-sm', active === 'sandboxes' && 'active']}
-				>Sandboxes</a
-			>
-			<a href="/#about" class:list={['hide-sm', active === 'about' && 'active']}>About</a>
-			<span class="sep hide-sm"></span>
-			<button class="icon-btn" aria-label="Search" title="Search">
-				<svg
-					width="16"
-					height="16"
-					viewBox="0 0 24 24"
-					fill="none"
-					stroke="currentColor"
-					stroke-width="2"
-				>
-					<circle cx="11" cy="11" r="7"></circle>
-					<path d="m20 20-3.5-3.5"></path>
-				</svg>
-			</button>
-		</nav>
-	</div>
+  <div class="wrap bar">
+    <a class="brand" href="/">fake frontend<span class="dot">.</span></a>
+    <nav class="nav">
+      <a href="/#latest" class:list={[active === 'latest' && 'active']}
+        >Latest</a
+      >
+      <a
+        href="/#playground"
+        class:list={['hide-sm', active === 'sandboxes' && 'active']}
+        >Sandboxes</a
+      >
+      <a href="/#about" class:list={['hide-sm', active === 'about' && 'active']}
+        >About</a
+      >
+      <span class="sep hide-sm"></span>
+      <button class="icon-btn" aria-label="Search" title="Search">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <circle cx="11" cy="11" r="7"></circle>
+          <path d="m20 20-3.5-3.5"></path>
+        </svg>
+      </button>
+    </nav>
+  </div>
 </header>

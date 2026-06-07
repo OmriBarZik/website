@@ -8,197 +8,236 @@ import { mdInline, stripInline } from '../utils/text';
 import '../styles/article.css';
 
 interface PagerLink {
-	href: string;
-	label: string;
-	title: string;
+  href: string;
+  label: string;
+  title: string;
 }
 
 interface Props {
-	data: CollectionEntry<'blog'>['data'];
-	headings: MarkdownHeading[];
-	prev?: PagerLink;
-	next?: PagerLink;
+  data: CollectionEntry<'blog'>['data'];
+  headings: MarkdownHeading[];
+  prev?: PagerLink;
+  next?: PagerLink;
 }
 
 const { data, headings, prev, next } = Astro.props;
-const { title, description, pubDate, topic, readingTime, heroImage, heroCaption, series } =
-	data;
+const {
+  title,
+  description,
+  pubDate,
+  topic,
+  readingTime,
+  heroImage,
+  heroCaption,
+  series,
+} = data;
 
 const topicClass =
-	topic === 'TypeScript' ? 'is-ts' : topic === 'Docker' ? 'is-docker' : 'is-node';
+  topic === 'TypeScript'
+    ? 'is-ts'
+    : topic === 'Docker'
+      ? 'is-docker'
+      : 'is-node';
 
 // section links for the TOC + scroll-spy (h2s only)
 const toc = headings.filter((h) => h.depth === 2);
 
 // series progress glyph: ●●○○
 const progressGlyph = series
-	? '●'.repeat(series.part) + '○'.repeat(Math.max(0, series.total - series.part))
-	: '';
+  ? '●'.repeat(series.part) +
+    '○'.repeat(Math.max(0, series.total - series.part))
+  : '';
 ---
 
 <BaseLayout
-	title={title}
-	description={stripInline(description)}
-	image={heroImage}
-	active="latest"
+  title={title}
+  description={stripInline(description)}
+  image={heroImage}
+  active="latest"
 >
-	<div class="progress" id="progress"></div>
+  <div class="progress" id="progress"></div>
 
-	<article class="article">
-		<div class="wrap art-head">
-			<div class="crumbs">
-				<a href="/#latest">Guides</a><span class="sep">/</span>
-				<a href="/#latest">{topic}</a>
-				{
-					series && (
-						<>
-							<span class="sep">/</span>
-							<span>{series.name.replace(/^.*at the /i, 'At the ')}</span>
-						</>
-					)
-				}
-			</div>
+  <article class="article">
+    <div class="wrap art-head">
+      <div class="crumbs">
+        <a href="/#latest">Guides</a><span class="sep">/</span>
+        <a href="/#latest">{topic}</a>
+        {
+          series && (
+            <>
+              <span class="sep">/</span>
+              <span>{series.name.replace(/^.*at the /i, 'At the ')}</span>
+            </>
+          )
+        }
+      </div>
 
-			{
-				series && (
-					<div class="series-banner">
-						<div>
-							<div class="pn">Series · {series.name}</div>
-							<div class="st">Part {series.part} of {series.total}</div>
-						</div>
-						<div class="prog">{progressGlyph}</div>
-					</div>
-				)
-			}
+      {
+        series && (
+          <div class="series-banner">
+            <div>
+              <div class="pn">Series · {series.name}</div>
+              <div class="st">
+                Part {series.part} of {series.total}
+              </div>
+            </div>
+            <div class="prog">{progressGlyph}</div>
+          </div>
+        )
+      }
 
-			<h1>{title}</h1>
-			<p class="standfirst" set:html={mdInline(description)}></p>
+      <h1>{title}</h1>
+      <p class="standfirst" set:html={mdInline(description)} />
 
-			<div class="art-meta">
-				<span class="stat"><FormattedDate date={pubDate} /></span>
-				<span class="mdot"></span>
-				<span class="stat">{readingTime} read</span>
-				<span class="spacer"></span>
-				<a class={`tag ${topicClass}`} href="/#latest">{topic}</a>
-			</div>
+      <div class="art-meta">
+        <span class="stat"><FormattedDate date={pubDate} /></span>
+        <span class="mdot"></span>
+        <span class="stat">{readingTime} read</span>
+        <span class="spacer"></span>
+        <a class={`tag ${topicClass}`} href="/#latest">{topic}</a>
+      </div>
 
-			{
-				heroImage ? (
-					<div class="art-hero">
-						<Image src={heroImage} alt="" width={1120} height={480} />
-					</div>
-				) : (
-					<div class="art-hero">
-						<div class="ph"></div>
-					</div>
-				)
-			}
-			{heroCaption && <div class="art-hero-cap">{heroCaption}</div>}
-		</div>
+      {
+        heroImage ? (
+          <div class="art-hero">
+            <Image src={heroImage} alt="" width={1120} height={480} />
+          </div>
+        ) : (
+          <div class="art-hero">
+            <div class="ph" />
+          </div>
+        )
+      }
+      {heroCaption && <div class="art-hero-cap">{heroCaption}</div>}
+    </div>
 
-		<div class="wrap art-body">
-			<div class="prose">
-				<slot />
+    <div class="wrap art-body">
+      <div class="prose">
+        <slot />
 
-				<hr />
+        <hr />
 
-				{
-					(prev || next) && (
-						<div class="pager">
-							{prev ? (
-								<a href={prev.href}>
-									<div class="dir">{prev.label}</div>
-									<div class="pt">{prev.title}</div>
-								</a>
-							) : (
-								<span />
-							)}
-							{next ? (
-								<a href={next.href} class="next">
-									<div class="dir">{next.label}</div>
-									<div class="pt">{next.title}</div>
-								</a>
-							) : (
-								<span />
-							)}
-						</div>
-					)
-				}
-			</div>
+        {
+          (prev || next) && (
+            <div class="pager">
+              {prev ? (
+                <a href={prev.href}>
+                  <div class="dir">{prev.label}</div>
+                  <div class="pt">{prev.title}</div>
+                </a>
+              ) : (
+                <span />
+              )}
+              {next ? (
+                <a href={next.href} class="next">
+                  <div class="dir">{next.label}</div>
+                  <div class="pt">{next.title}</div>
+                </a>
+              ) : (
+                <span />
+              )}
+            </div>
+          )
+        }
+      </div>
 
-			<aside class="toc-rail">
-				<div class="toc">
-					<h4>On this page</h4>
-					<nav id="toc-nav">
-						{toc.map((h) => <a href={`#${h.slug}`}>{h.text}</a>)}
-					</nav>
-					<div class="share">
-						<button class="icon-btn" id="copy-link" title="Copy link" aria-label="Copy link">
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path>
-								<path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path>
-							</svg>
-						</button>
-						<button class="icon-btn" id="share-btn" title="Share" aria-label="Share">
-							<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-								<circle cx="18" cy="5" r="3"></circle>
-								<circle cx="6" cy="12" r="3"></circle>
-								<circle cx="18" cy="19" r="3"></circle>
-								<path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"></path>
-							</svg>
-						</button>
-					</div>
-				</div>
-			</aside>
-		</div>
-	</article>
+      <aside class="toc-rail">
+        <div class="toc">
+          <h4>On this page</h4>
+          <nav id="toc-nav">
+            {toc.map((h) => <a href={`#${h.slug}`}>{h.text}</a>)}
+          </nav>
+          <div class="share">
+            <button
+              class="icon-btn"
+              id="copy-link"
+              title="Copy link"
+              aria-label="Copy link"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"></path>
+                <path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"></path>
+              </svg>
+            </button>
+            <button
+              class="icon-btn"
+              id="share-btn"
+              title="Share"
+              aria-label="Share"
+            >
+              <svg
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="18" cy="5" r="3"></circle>
+                <circle cx="6" cy="12" r="3"></circle>
+                <circle cx="18" cy="19" r="3"></circle>
+                <path d="m8.6 13.5 6.8 4M15.4 6.5 8.6 10.5"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </article>
 </BaseLayout>
 
 <script>
-	// reading progress bar
-	const bar = document.getElementById('progress');
-	const onScroll = () => {
-		const h = document.documentElement;
-		const max = h.scrollHeight - h.clientHeight;
-		if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
-	};
-	document.addEventListener('scroll', onScroll, { passive: true });
-	onScroll();
+  // reading progress bar
+  const bar = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement;
+    const max = h.scrollHeight - h.clientHeight;
+    if (bar) bar.style.width = (max > 0 ? (h.scrollTop / max) * 100 : 0) + '%';
+  };
+  document.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
 
-	// TOC scroll-spy
-	const links = [...document.querySelectorAll<HTMLAnchorElement>('#toc-nav a')];
-	const map = new Map(links.map((a) => [a.getAttribute('href')!.slice(1), a]));
-	const spy = new IntersectionObserver(
-		(entries) => {
-			entries.forEach((e) => {
-				if (e.isIntersecting) {
-					links.forEach((l) => l.classList.remove('active'));
-					const a = map.get(e.target.id);
-					if (a) a.classList.add('active');
-				}
-			});
-		},
-		{ rootMargin: '-80px 0px -70% 0px', threshold: 0 },
-	);
-	document.querySelectorAll('.prose h2[id]').forEach((h) => spy.observe(h));
+  // TOC scroll-spy
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('#toc-nav a')];
+  const map = new Map(links.map((a) => [a.getAttribute('href')!.slice(1), a]));
+  const spy = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          links.forEach((l) => l.classList.remove('active'));
+          const a = map.get(e.target.id);
+          if (a) a.classList.add('active');
+        }
+      });
+    },
+    { rootMargin: '-80px 0px -70% 0px', threshold: 0 },
+  );
+  document.querySelectorAll('.prose h2[id]').forEach((h) => spy.observe(h));
 
-	// share row
-	const flash = (btn: Element | null, label: string) => {
-		if (!btn) return;
-		const title = btn.getAttribute('title');
-		btn.setAttribute('title', label);
-		setTimeout(() => btn.setAttribute('title', title || ''), 1400);
-	};
-	document.getElementById('copy-link')?.addEventListener('click', () => {
-		navigator.clipboard?.writeText(location.href);
-		flash(document.getElementById('copy-link'), 'Copied ✓');
-	});
-	document.getElementById('share-btn')?.addEventListener('click', () => {
-		if (navigator.share) {
-			navigator.share({ title: document.title, url: location.href });
-		} else {
-			navigator.clipboard?.writeText(location.href);
-			flash(document.getElementById('share-btn'), 'Copied ✓');
-		}
-	});
+  // share row
+  const flash = (btn: Element | null, label: string) => {
+    if (!btn) return;
+    const title = btn.getAttribute('title');
+    btn.setAttribute('title', label);
+    setTimeout(() => btn.setAttribute('title', title || ''), 1400);
+  };
+  document.getElementById('copy-link')?.addEventListener('click', () => {
+    navigator.clipboard?.writeText(location.href);
+    flash(document.getElementById('copy-link'), 'Copied ✓');
+  });
+  document.getElementById('share-btn')?.addEventListener('click', () => {
+    if (navigator.share) {
+      navigator.share({ title: document.title, url: location.href });
+    } else {
+      navigator.clipboard?.writeText(location.href);
+      flash(document.getElementById('share-btn'), 'Copied ✓');
+    }
+  });
 </script>

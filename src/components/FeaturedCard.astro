@@ -5,102 +5,105 @@ import FormattedDate from './FormattedDate.astro';
 import { mdInline } from '../utils/text';
 
 interface Props {
-	post: CollectionEntry<'blog'>;
+  post: CollectionEntry<'blog'>;
 }
 const { post } = Astro.props;
-const { title, description, pubDate, topic, readingTime, heroImage } = post.data;
+const { title, description, pubDate, topic, readingTime, heroImage } =
+  post.data;
 ---
 
 <a class="feat-card" href={`/blog/${post.id}/`} aria-label="Latest post">
-	{
-		heroImage ? (
-			<Image src={heroImage} alt="" width={640} height={400} />
-		) : (
-			<div class="ph"></div>
-		)
-	}
-	<div class="body">
-		<div class="eyebrow">★ Latest&nbsp;&nbsp;·&nbsp;&nbsp;<span class="topic">{topic}</span></div>
-		<h3>{title}</h3>
-		<p set:html={mdInline(description)}></p>
-		<div class="meta">
-			<span><FormattedDate date={pubDate} /></span>
-			<span>· {readingTime} read</span>
-		</div>
-	</div>
+  {
+    heroImage ? (
+      <Image src={heroImage} alt="" width={640} height={400} />
+    ) : (
+      <div class="ph" />
+    )
+  }
+  <div class="body">
+    <div class="eyebrow">
+      ★ Latest&nbsp;&nbsp;·&nbsp;&nbsp;<span class="topic">{topic}</span>
+    </div>
+    <h3>{title}</h3>
+    <p set:html={mdInline(description)} />
+    <div class="meta">
+      <span><FormattedDate date={pubDate} /></span>
+      <span>· {readingTime} read</span>
+    </div>
+  </div>
 </a>
 
 <style>
-	.feat-card {
-		background: var(--surface-raised);
-		border: 1px solid var(--border);
-		border-radius: var(--radius-200);
-		overflow: hidden;
-		box-shadow: var(--shadow);
-		transition:
-			transform var(--duration-normal) var(--ease),
-			box-shadow var(--duration-normal) var(--ease);
-	}
+  .feat-card {
+    background: var(--surface-raised);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-200);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition:
+      transform var(--duration-normal) var(--ease),
+      box-shadow var(--duration-normal) var(--ease);
+  }
 
-	.feat-card:hover {
-		transform: translateY(-3px);
-		box-shadow: var(--shadow-lg);
-	}
+  .feat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
 
-	/* :global(img) — the cover is an <Image> child component */
-	.feat-card .ph,
-	.feat-card :global(img) {
-		aspect-ratio: 16 / 10;
-		width: 100%;
-		object-fit: cover;
-	}
+  /* :global(img) — the cover is an <Image> child component */
+  .feat-card .ph,
+  .feat-card :global(img) {
+    aspect-ratio: 16 / 10;
+    width: 100%;
+    object-fit: cover;
+  }
 
-	.body {
-		padding: var(--space-250) var(--space-300) var(--space-300);
-	}
+  .body {
+    padding: var(--space-250) var(--space-300) var(--space-300);
+  }
 
-	.eyebrow {
-		display: flex;
-		align-items: center;
-		gap: var(--space-100);
-		font-family: var(--label);
-		font-size: 11.5px;
-		letter-spacing: 0.04em;
-		color: var(--primary);
-		font-weight: 600;
-		white-space: nowrap;
-	}
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: var(--space-100);
+    font-family: var(--label);
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--primary);
+    font-weight: 600;
+    white-space: nowrap;
+  }
 
-	.eyebrow .topic {
-		color: var(--text-muted);
-	}
+  .eyebrow .topic {
+    color: var(--text-muted);
+  }
 
-	h3 {
-		font-weight: 500;
-		font-size: 25px;
-		line-height: 1.15;
-		margin: var(--space-150) 0 0;
-		letter-spacing: -0.01em;
-	}
+  h3 {
+    font-weight: 500;
+    font-size: 25px;
+    line-height: 1.15;
+    margin: var(--space-150) 0 0;
+    letter-spacing: -0.01em;
+  }
 
-	p {
-		color: var(--text-muted);
-		font-size: 16px;
-		margin: var(--space-100) 0 0;
-	}
+  p {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin: var(--space-100) 0 0;
+  }
 
-	.meta {
-		font-family: var(--mono);
-		font-size: 11.5px;
-		color: var(--text-faint);
-		margin-top: var(--space-200);
-		display: flex;
-		gap: var(--space-200);
-	}
+  .meta {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    margin-top: var(--space-200);
+    display: flex;
+    gap: var(--space-200);
+  }
 
-	@media (prefers-reduced-motion: reduce) {
-		.feat-card:hover {
-			transform: none;
-		}
-	}
+  @media (prefers-reduced-motion: reduce) {
+    .feat-card:hover {
+      transform: none;
+    }
+  }
 </style>

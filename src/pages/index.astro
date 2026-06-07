@@ -8,7 +8,7 @@ import Terminal from '../components/Terminal.astro';
 import Subscribe from '../components/Subscribe.svelte';
 
 const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 const featured = posts[0];
 
@@ -25,221 +25,226 @@ console.log(slugify("  Hello, fake frontend!  "));
 return slugify("TypeScript & Docker, 2026");`;
 
 const dockerTerminal = {
-	intro: [
-		"[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]",
-	],
-	demo: 'docker build -t app .',
-	commands: {
-		'docker build -t app .': [
-			'[muted]=> [internal] load build definition[/muted]',
-			'[muted]=> [builder 1/4] FROM node:22-alpine[/muted]',
-			'[muted]=> [builder 2/4] COPY package*.json ./[/muted]',
-			'[muted]=> [builder 3/4] RUN npm ci[/muted]   [ok]✓ 4.1s[/ok]',
-			'[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]',
-			'[muted]=> [stage-1 1/2] COPY --from=builder /app/dist ./[/muted]',
-			'[ok]✓ built app:latest  ·  final image 78MB[/ok]',
-		],
-		'docker run -p 3000:3000 app': [
-			'[ok]→ server listening on :3000[/ok]',
-			'[muted]press ctrl-c to stop[/muted]',
-		],
-		'docker images': [
-			'REPOSITORY   TAG      SIZE',
-			'app          latest   78MB',
-			'node         22-alpine  142MB',
-		],
-		ls: ['Dockerfile   index.js   package.json   tsconfig.json'],
-	},
+  intro: [
+    "[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]",
+  ],
+  demo: 'docker build -t app .',
+  commands: {
+    'docker build -t app .': [
+      '[muted]=> [internal] load build definition[/muted]',
+      '[muted]=> [builder 1/4] FROM node:22-alpine[/muted]',
+      '[muted]=> [builder 2/4] COPY package*.json ./[/muted]',
+      '[muted]=> [builder 3/4] RUN npm ci[/muted]   [ok]✓ 4.1s[/ok]',
+      '[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]',
+      '[muted]=> [stage-1 1/2] COPY --from=builder /app/dist ./[/muted]',
+      '[ok]✓ built app:latest  ·  final image 78MB[/ok]',
+    ],
+    'docker run -p 3000:3000 app': [
+      '[ok]→ server listening on :3000[/ok]',
+      '[muted]press ctrl-c to stop[/muted]',
+    ],
+    'docker images': [
+      'REPOSITORY   TAG      SIZE',
+      'app          latest   78MB',
+      'node         22-alpine  142MB',
+    ],
+    ls: ['Dockerfile   index.js   package.json   tsconfig.json'],
+  },
 };
 ---
 
 <BaseLayout active="latest">
-	<!-- HERO -->
-	<section class="wrap hero">
-		<div class="hero-grid">
-			<div>
-				<span class="kicker">The notebook of a backend engineer</span>
-				<h1>Writing about the things that <em>actually</em> ship.</h1>
-				<p class="lede">
-					Slow, careful guides on TypeScript, Docker and Node.js — every example
-					runs in a sandbox right here on the page. No setup, no “it works on my
-					machine.”
-				</p>
-				<div class="cta-row">
-					{
-						featured && (
-							<a class="btn btn-primary" href={`/blog/${featured.id}/`}>
-								Read the latest <span class="arr">→</span>
-							</a>
-						)
-					}
-					<a class="btn btn-ghost" href="#latest">All posts</a>
-				</div>
-				<div class="by">
-					<span class="mono cwd">~/</span>
-					<span>A new guide most weeks — TypeScript, Docker &amp; Node.js.</span>
-				</div>
-			</div>
+  <!-- HERO -->
+  <section class="wrap hero">
+    <div class="hero-grid">
+      <div>
+        <span class="kicker">The notebook of a backend engineer</span>
+        <h1>Writing about the things that <em>actually</em> ship.</h1>
+        <p class="lede">
+          Slow, careful guides on TypeScript, Docker and Node.js — every example
+          runs in a sandbox right here on the page. No setup, no “it works on my
+          machine.”
+        </p>
+        <div class="cta-row">
+          {
+            featured && (
+              <a class="btn btn-primary" href={`/blog/${featured.id}/`}>
+                Read the latest <span class="arr">→</span>
+              </a>
+            )
+          }
+          <a class="btn btn-ghost" href="#latest">All posts</a>
+        </div>
+        <div class="by">
+          <span class="mono cwd">~/</span>
+          <span>A new guide most weeks — TypeScript, Docker &amp; Node.js.</span
+          >
+        </div>
+      </div>
 
-			{featured && <FeaturedCard post={featured} />}
-		</div>
-	</section>
+      {featured && <FeaturedCard post={featured} />}
+    </div>
+  </section>
 
-	<!-- LATEST (centerpiece) -->
-	<section class="section" id="latest">
-		<div class="wrap">
-			<div class="sec-head">
-				<div>
-					<span class="kicker">The writing</span>
-					<h2>Latest posts</h2>
-					<p class="desc">
-						Everything published so far — new guides land most weeks.
-					</p>
-				</div>
-				<a class="btn btn-text" href="/rss.xml">RSS feed <span class="arr">→</span></a>
-			</div>
+  <!-- LATEST (centerpiece) -->
+  <section class="section" id="latest">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <span class="kicker">The writing</span>
+          <h2>Latest posts</h2>
+          <p class="desc">
+            Everything published so far — new guides land most weeks.
+          </p>
+        </div>
+        <a class="btn btn-text" href="/rss.xml"
+          >RSS feed <span class="arr">→</span></a
+        >
+      </div>
 
-			<PostList posts={posts} />
-		</div>
-	</section>
+      <PostList posts={posts} />
+    </div>
+  </section>
 
-	<!-- INTERACTIVE SHOWCASE -->
-	<section class="section alt" id="playground">
-		<div class="wrap">
-			<div class="sec-head">
-				<div>
-					<span class="kicker">Run it, don't just read it</span>
-					<h2>Every snippet is a sandbox.</h2>
-					<p class="desc">
-						The thing that makes these guides different: edit the code and hit run —
-						it executes live in your browser, no setup.
-					</p>
-				</div>
-			</div>
-			<div class="demo-grid">
-				<div>
-					<div class="kicker demo-label demo-label-node">
-						▶ Node sandbox · editable
-					</div>
-					<Sandbox filename="pipeline.js" lang="js" badge="Node">{pipelineCode}</Sandbox>
-				</div>
-				<div>
-					<div class="kicker demo-label demo-label-docker">
-						▶ Container terminal · simulated
-					</div>
-					<Terminal
-						prompt="~/app $"
-						title="multi-stage build"
-						hint="docker build -t app ."
-						intro={dockerTerminal.intro}
-						demo={dockerTerminal.demo}
-						commands={dockerTerminal.commands}
-					/>
-				</div>
-			</div>
-		</div>
-	</section>
+  <!-- INTERACTIVE SHOWCASE -->
+  <section class="section alt" id="playground">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <span class="kicker">Run it, don't just read it</span>
+          <h2>Every snippet is a sandbox.</h2>
+          <p class="desc">
+            The thing that makes these guides different: edit the code and hit
+            run — it executes live in your browser, no setup.
+          </p>
+        </div>
+      </div>
+      <div class="demo-grid">
+        <div>
+          <div class="kicker demo-label demo-label-node">
+            ▶ Node sandbox · editable
+          </div>
+          <Sandbox filename="pipeline.js" lang="js" badge="Node"
+            >{pipelineCode}</Sandbox
+          >
+        </div>
+        <div>
+          <div class="kicker demo-label demo-label-docker">
+            ▶ Container terminal · simulated
+          </div>
+          <Terminal
+            prompt="~/app $"
+            title="multi-stage build"
+            hint="docker build -t app ."
+            intro={dockerTerminal.intro}
+            demo={dockerTerminal.demo}
+            commands={dockerTerminal.commands}
+          />
+        </div>
+      </div>
+    </div>
+  </section>
 
-	<!-- SUBSCRIBE -->
-	<section class="wrap subscribe-section" id="about">
-		<Subscribe client:visible />
-	</section>
+  <!-- SUBSCRIBE -->
+  <section class="wrap subscribe-section" id="about">
+    <Subscribe client:visible />
+  </section>
 </BaseLayout>
 
 <style>
-	/* hero */
-	.hero {
-		padding-top: var(--space-800);
-		padding-bottom: var(--space-700);
-	}
+  /* hero */
+  .hero {
+    padding-top: var(--space-800);
+    padding-bottom: var(--space-700);
+  }
 
-	.hero-grid {
-		display: grid;
-		grid-template-columns: 1.15fr 0.85fr;
-		gap: var(--space-700);
-		align-items: center;
-	}
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: var(--space-700);
+    align-items: center;
+  }
 
-	.hero h1 {
-		font-weight: 500;
-		font-size: 60px;
-		line-height: 1.02;
-		letter-spacing: -0.02em;
-		margin: var(--space-200) 0 0;
-		text-wrap: balance;
-	}
+  .hero h1 {
+    font-weight: 500;
+    font-size: 60px;
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin: var(--space-200) 0 0;
+    text-wrap: balance;
+  }
 
-	.hero h1 em {
-		font-style: italic;
-		color: var(--primary);
-	}
+  .hero h1 em {
+    font-style: italic;
+    color: var(--primary);
+  }
 
-	.hero .lede {
-		font-size: 20px;
-		color: var(--text-soft);
-		line-height: 1.5;
-		margin: var(--space-300) 0 0;
-		max-width: 30em;
-	}
+  .hero .lede {
+    font-size: 20px;
+    color: var(--text-soft);
+    line-height: 1.5;
+    margin: var(--space-300) 0 0;
+    max-width: 30em;
+  }
 
-	.hero .cta-row {
-		display: flex;
-		gap: var(--space-150);
-		margin-top: var(--space-400);
-		align-items: center;
-	}
+  .hero .cta-row {
+    display: flex;
+    gap: var(--space-150);
+    margin-top: var(--space-400);
+    align-items: center;
+  }
 
-	.hero .by {
-		display: flex;
-		align-items: center;
-		gap: var(--space-150);
-		margin-top: var(--space-400);
-		color: var(--text-muted);
-		font-family: var(--label);
-		font-size: 13px;
-	}
+  .hero .by {
+    display: flex;
+    align-items: center;
+    gap: var(--space-150);
+    margin-top: var(--space-400);
+    color: var(--text-muted);
+    font-family: var(--label);
+    font-size: 13px;
+  }
 
-	.hero .by .cwd {
-		color: var(--primary);
-		font-size: 12px;
-	}
+  .hero .by .cwd {
+    color: var(--primary);
+    font-size: 12px;
+  }
 
-	/* interactive showcase */
-	.demo-grid {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: var(--space-300);
-	}
+  /* interactive showcase */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-300);
+  }
 
-	.demo-label {
-		margin-bottom: var(--space-100);
-	}
+  .demo-label {
+    margin-bottom: var(--space-100);
+  }
 
-	.demo-label-node {
-		color: var(--secondary);
-	}
+  .demo-label-node {
+    color: var(--secondary);
+  }
 
-	.demo-label-docker {
-		color: var(--topic-docker);
-	}
+  .demo-label-docker {
+    color: var(--topic-docker);
+  }
 
-	/* subscribe section spacing */
-	.subscribe-section {
-		padding: var(--space-250) var(--space-400) var(--space-800);
-	}
+  /* subscribe section spacing */
+  .subscribe-section {
+    padding: var(--space-250) var(--space-400) var(--space-800);
+  }
 
-	@media (width <= 900px) {
-		.hero-grid {
-			grid-template-columns: 1fr;
-			gap: var(--space-500);
-		}
+  @media (width <= 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-500);
+    }
 
-		.hero h1 {
-			font-size: 46px;
-		}
+    .hero h1 {
+      font-size: 46px;
+    }
 
-		.demo-grid {
-			grid-template-columns: 1fr;
-		}
-	}
+    .demo-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

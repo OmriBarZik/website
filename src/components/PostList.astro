@@ -4,22 +4,30 @@ import PostListIsland from './PostList.svelte';
 import { TOPICS } from '../consts';
 
 interface Props {
-	posts: CollectionEntry<'blog'>[];
+  posts: CollectionEntry<'blog'>[];
 }
 const { posts } = Astro.props;
 
 const topicClass = (topic: string) =>
-	topic === 'TypeScript' ? 'is-ts' : topic === 'Docker' ? 'is-docker' : 'is-node';
+  topic === 'TypeScript'
+    ? 'is-ts'
+    : topic === 'Docker'
+      ? 'is-docker'
+      : 'is-node';
 const fmtDate = (d: Date) =>
-	d.toLocaleDateString('en-us', { year: 'numeric', month: 'short', day: 'numeric' });
+  d.toLocaleDateString('en-us', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 
 const data = posts.map((p) => ({
-	href: `/blog/${p.id}/`,
-	title: p.data.title,
-	topic: p.data.topic,
-	topicClass: topicClass(p.data.topic),
-	readingTime: p.data.readingTime,
-	date: fmtDate(p.data.pubDate),
+  href: `/blog/${p.id}/`,
+  title: p.data.title,
+  topic: p.data.topic,
+  topicClass: topicClass(p.data.topic),
+  readingTime: p.data.readingTime,
+  date: fmtDate(p.data.pubDate),
 }));
 ---
 

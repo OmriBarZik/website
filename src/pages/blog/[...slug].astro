@@ -8,16 +8,16 @@ import Figure from '../../components/Figure.astro';
 import CodeBlock from '../../components/CodeBlock.astro';
 
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.id },
-		props: { post, posts },
-	}));
+  const posts = await getCollection('blog');
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post, posts },
+  }));
 }
 
 interface Props {
-	post: CollectionEntry<'blog'>;
-	posts: CollectionEntry<'blog'>[];
+  post: CollectionEntry<'blog'>;
+  posts: CollectionEntry<'blog'>[];
 }
 
 const { post, posts } = Astro.props;
@@ -28,25 +28,25 @@ let prev: { href: string; label: string; title: string } | undefined;
 let next: { href: string; label: string; title: string } | undefined;
 const series = post.data.series;
 if (series) {
-	const sibs = posts.filter((p) => p.data.series?.name === series.name);
-	const at = (n: number) => sibs.find((p) => p.data.series?.part === n);
-	const pv = at(series.part - 1);
-	const nx = at(series.part + 1);
-	if (pv)
-		prev = {
-			href: `/blog/${pv.id}/`,
-			label: `← Part ${pv.data.series!.part}`,
-			title: pv.data.title,
-		};
-	if (nx)
-		next = {
-			href: `/blog/${nx.id}/`,
-			label: `Part ${nx.data.series!.part} →`,
-			title: nx.data.title,
-		};
+  const sibs = posts.filter((p) => p.data.series?.name === series.name);
+  const at = (n: number) => sibs.find((p) => p.data.series?.part === n);
+  const pv = at(series.part - 1);
+  const nx = at(series.part + 1);
+  if (pv)
+    prev = {
+      href: `/blog/${pv.id}/`,
+      label: `← Part ${pv.data.series!.part}`,
+      title: pv.data.title,
+    };
+  if (nx)
+    next = {
+      href: `/blog/${nx.id}/`,
+      label: `Part ${nx.data.series!.part} →`,
+      title: nx.data.title,
+    };
 }
 ---
 
 <PostLayout data={post.data} headings={headings} prev={prev} next={next}>
-	<Content components={{ Sandbox, Terminal, Callout, Figure, CodeBlock }} />
+  <Content components={{ Sandbox, Terminal, Callout, Figure, CodeBlock }} />
 </PostLayout>

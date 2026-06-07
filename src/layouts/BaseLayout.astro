@@ -6,31 +6,31 @@ import Header from '../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 interface Props {
-	title?: string;
-	description?: string;
-	image?: ImageMetadata;
-	/** which nav item to highlight */
-	active?: string;
+  title?: string;
+  description?: string;
+  image?: ImageMetadata;
+  /** which nav item to highlight */
+  active?: string;
 }
 
 const {
-	title = SITE_TITLE,
-	description = SITE_DESCRIPTION,
-	image,
-	active,
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  image,
+  active,
 } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} image={image} />
-	</head>
-	<body>
-		<div class="page">
-			<Header active={active} />
-			<slot />
-			<Footer />
-		</div>
-	</body>
+  <head>
+    <BaseHead title={title} description={description} image={image} />
+  </head>
+  <body>
+    <div class="page">
+      <Header active={active} />
+      <slot />
+      <Footer />
+    </div>
+  </body>
 </html>
