@@ -5,7 +5,7 @@ pubDate: 2026-05-28
 topic: TypeScript
 readingTime: 9 min
 heroCaption: A config object you can trust — validated once, typed everywhere.
-series: { name: "TypeScript at the boundaries", part: 2, total: 4 }
+series: { name: 'TypeScript at the boundaries', part: 2, total: 4 }
 ---
 
 Every Node app eventually grows a tangle of `process.env` reads — a database URL here, a feature flag there, a port number cast with a hopeful `Number(...)`. TypeScript can’t help you, because as far as it knows every one of those values is `string | undefined`. So you reach for the non-null assertion, and ship a footgun.
@@ -16,7 +16,10 @@ There’s a better shape for this, and it doesn’t need a validation library. T
 
 Here’s the pattern you’ve almost certainly written. It looks innocent:
 
-<CodeBlock filename="db.ts" lang="ts">{`// scattered across the codebase, repeated, untyped
+<CodeBlock
+  filename="db.ts"
+  lang="ts"
+>{`// scattered across the codebase, repeated, untyped
 const url   = process.env.DATABASE_URL!;          // string, you hope
 const port  = Number(process.env.PORT);           // NaN if unset
 const debug = process.env.DEBUG === "true";        // "false"? "0"? who knows`}</CodeBlock>
@@ -24,7 +27,9 @@ const debug = process.env.DEBUG === "true";        // "false"? "0"? who knows`}<
 Three different failure modes, three different places to fix them, and not one of them will be caught at compile time. The `!` tells TypeScript to trust you. It shouldn’t.
 
 <Callout mark="Why">
-Environment variables are an *input boundary*, just like an HTTP request body. The rule at every boundary is the same: **parse, don’t cast.** Validate the untrusted shape into a trusted one, once.
+  Environment variables are an *input boundary*, just like an HTTP request body.
+  The rule at every boundary is the same: **parse, don’t cast.** Validate the
+  untrusted shape into a trusted one, once.
 </Callout>
 
 ## Parse once, at boot
@@ -47,17 +52,17 @@ function str(name, raw) {
 }
 function bool(raw) { return raw === "true" || raw === "1"; }
 
-// pretend this is process.env  — try deleting DATABASE_URL!
+// pretend this is process.env — try deleting DATABASE_URL!
 const raw = {
-  DATABASE_URL: "postgres://localhost/app",
-  PORT: "3000",
-  DEBUG: "true",
+DATABASE_URL: "postgres://localhost/app",
+PORT: "3000",
+DEBUG: "true",
 };
 
 const config = Object.freeze({
-  databaseUrl: str("DATABASE_URL", raw.DATABASE_URL),
-  port:        num("PORT", raw.PORT, 8080),
-  debug:       bool(raw.DEBUG),
+databaseUrl: str("DATABASE_URL", raw.DATABASE_URL),
+port: num("PORT", raw.PORT, 8080),
+debug: bool(raw.DEBUG),
 });
 
 console.log("✓ config loaded:", config);
@@ -70,13 +75,17 @@ The whole app now imports `config` and gets autocompletion, real types, and a gu
 Because the parser runs at startup, the failure happens at the only time it’s cheap to fix: before you’ve served a single request. Compare the two timelines:
 
 > “A config error at boot is a deploy that never goes live. The same error read inline is a 500 at 3am.”
+>
 > <cite>— the entire argument, in one sentence</cite>
 
 - **Inline reads** fail lazily, per-code-path, often only under the exact request that touches them.
 - **A boot-time parse** fails eagerly, once, with a message that names the variable.
-- Your editor now *knows* `config.port` is a `number` — no casting, no guessing.
+- Your editor now _knows_ `config.port` is a `number` — no casting, no guessing.
 
-<Figure ratio="16/8" caption="Fig 1. Untrusted env in, frozen typed config out — the boundary crossed exactly once." />
+<Figure
+  ratio="16/8"
+  caption="Fig 1. Untrusted env in, frozen typed config out — the boundary crossed exactly once."
+/>
 
 ## Wiring it into the container
 
@@ -86,25 +95,29 @@ This pattern pairs beautifully with Docker: declare the variables your image exp
   prompt="~/app $"
   title="run with env"
   hint="docker run --env-file .env app"
-  intro={["[muted]# the image expects DATABASE_URL, PORT, DEBUG. try 'docker run app'[/muted]"]}
+  intro={[
+    "[muted]# the image expects DATABASE_URL, PORT, DEBUG. try 'docker run app'[/muted]",
+  ]}
   demo="docker run app"
   commands={{
-    "docker run app": [
-      "[err]✖ Missing required env: DATABASE_URL[/err]",
-      "[muted]container exited (1) — boot-time validation caught it[/muted]"
+    'docker run app': [
+      '[err]✖ Missing required env: DATABASE_URL[/err]',
+      '[muted]container exited (1) — boot-time validation caught it[/muted]',
     ],
-    "docker run --env-file .env app": [
-      "[muted]loading .env … DATABASE_URL, PORT, DEBUG[/muted]",
-      "[ok]✓ config loaded[/ok]",
-      "[ok]→ server listening on :3000[/ok]"
+    'docker run --env-file .env app': [
+      '[muted]loading .env … DATABASE_URL, PORT, DEBUG[/muted]',
+      '[ok]✓ config loaded[/ok]',
+      '[ok]→ server listening on :3000[/ok]',
     ],
-    "cat .env": ["DATABASE_URL=postgres://db/app", "PORT=3000", "DEBUG=false"],
-    "ls": ["Dockerfile  .env  env.js  index.js  package.json"]
+    'cat .env': ['DATABASE_URL=postgres://db/app', 'PORT=3000', 'DEBUG=false'],
+    ls: ['Dockerfile  .env  env.js  index.js  package.json'],
   }}
 />
 
 <Callout kind="note" mark="Tip">
-Keep the parser dependency-free in small projects. When your schema grows past a dozen fields or needs nested shapes, reach for a runtime validator — but the *boundary* stays in exactly this one file.
+  Keep the parser dependency-free in small projects. When your schema grows past
+  a dozen fields or needs nested shapes, reach for a runtime validator — but the
+  *boundary* stays in exactly this one file.
 </Callout>
 
 ## Where to take it next

@@ -25,12 +25,12 @@ Presentational components are `.astro` (server-only, no client JS). Anything
 interactive is a **Svelte island**, fronted by a thin `.astro` wrapper that
 adapts the MDX/props API and sets `client:visible`:
 
-| `.astro` wrapper | Svelte island | Does |
-| ---------------- | ------------- | ---- |
-| `Sandbox.astro`  | `Sandbox.svelte`  | runnable code editor + WebContainers runner |
-| `Terminal.astro` | `Terminal.svelte` | scripted shell sim (not Docker) |
-| `PostList.astro` | `PostList.svelte` | server-rendered rows + topic-filter chips |
-| —                | `Subscribe.svelte` | subscribe form |
+| `.astro` wrapper | Svelte island      | Does                                        |
+| ---------------- | ------------------ | ------------------------------------------- |
+| `Sandbox.astro`  | `Sandbox.svelte`   | runnable code editor + WebContainers runner |
+| `Terminal.astro` | `Terminal.svelte`  | scripted shell sim (not Docker)             |
+| `PostList.astro` | `PostList.svelte`  | server-rendered rows + topic-filter chips   |
+| —                | `Subscribe.svelte` | subscribe form                              |
 
 Svelte **auto-escapes all interpolation**, so the sandbox/terminal output has no
 manual-escaping XSS surface (raw HTML would only ever come from an explicit
@@ -87,8 +87,8 @@ page styles:
 - **Motion** — `--duration-fast|normal|slow` + `--ease` / `--ease-out`.
 - **Shadow** — `--shadow-sm|·|-md|-lg`: layered, warm-tinted (`--shadow-hsl`,
   not black), single overhead light source ([Comeau](https://www.joshwcomeau.com/css/designing-shadows/)).
-- **Color** is **three tiers**: tier-1 *primitives* (the `--terracotta-*` /
-  `--forest-*` ramps, neutrals, code/terminal palette) → tier-2 *semantic roles*
+- **Color** is **three tiers**: tier-1 _primitives_ (the `--terracotta-*` /
+  `--forest-*` ramps, neutrals, code/terminal palette) → tier-2 _semantic roles_
   (`--primary`, `--text-body`/`--text-heading`/`--text-muted`, `--surface`/
   `--surface-raised`/`--surface-invert`, `--border`, …) → components, which
   reference **only** roles. Colors are authored in **OKLCH** with an exact **hex
@@ -100,10 +100,10 @@ page styles:
 [Stylelint](https://stylelint.org/) (config-standard, with `postcss-html` for
 `.astro`/`.svelte` `<style>`) gates style quality:
 
-| Command             | Action                                  |
-| ------------------- | --------------------------------------- |
-| `pnpm lint:css`     | Lint all CSS / `.astro` / `.svelte`     |
-| `pnpm lint:css:fix` | Auto-fix what's fixable                 |
+| Command             | Action                              |
+| ------------------- | ----------------------------------- |
+| `pnpm lint:css`     | Lint all CSS / `.astro` / `.svelte` |
+| `pnpm lint:css:fix` | Auto-fix what's fixable             |
 
 ## How the sandboxes work
 
@@ -175,36 +175,46 @@ reports, then enforce.
 ```mdx
 ---
 title: …
-description: Stop sprinkling `process.env.FOO!` everywhere…  # → standfirst (backtick = inline code)
+description: Stop sprinkling `process.env.FOO!` everywhere… # → standfirst (backtick = inline code)
 pubDate: 2026-05-28
-topic: TypeScript        # TypeScript | Docker | Node.js
+topic: TypeScript # TypeScript | Docker | Node.js
 readingTime: 9 min
-series: { name: "…", part: 2, total: 4 }   # optional → series banner + pager
-heroImage: ./cover.png   # optional → src/content image()
-heroCaption: …           # optional
+series: { name: '…', part: 2, total: 4 } # optional → series banner + pager
+heroImage: ./cover.png # optional → src/content image()
+heroCaption: … # optional
 ---
 
 Lead paragraph (gets the drop cap automatically).
 
-## A section          ← auto-numbered (01, 02…) and added to the TOC
+## A section ← auto-numbered (01, 02…) and added to the TOC
 
 <Sandbox filename="env.ts" lang="ts">{`
 const port = Number(process.env.PORT ?? 8080);
 console.log("port:", port);
 `}</Sandbox>
 
-<Callout kind="note" mark="Tip">Keep it dependency-free.</Callout>
+<Callout kind="note" mark="Tip">
+  Keep it dependency-free.
+</Callout>
 <CodeBlock filename="db.ts" lang="ts">{`const x = 1`}</CodeBlock>
-<Figure caption="…" />          {/* or src={importedImage} */}
-<Terminal prompt="~/app $" demo="docker build ." commands={{ /* … */ }} />
+<Figure caption="…" /> {/* or src={importedImage} */}
+<Terminal
+  prompt="~/app $"
+  demo="docker build ."
+  commands={
+    {
+      /* … */
+    }
+  }
+/>
 ```
 
 ## Commands
 
-| Command        | Action                              |
-| -------------- | ----------------------------------- |
-| `pnpm dev`     | Dev server at `localhost:4321`      |
-| `pnpm build`   | Static build to `./dist/`           |
-| `pnpm preview` | Preview the build (no sandboxes¹)   |
+| Command        | Action                            |
+| -------------- | --------------------------------- |
+| `pnpm dev`     | Dev server at `localhost:4321`    |
+| `pnpm build`   | Static build to `./dist/`         |
+| `pnpm preview` | Preview the build (no sandboxes¹) |
 
 ¹ See the cross-origin-isolation note above.
