@@ -9,7 +9,11 @@ permissions:
   contents: read
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
+
   deploy:
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,8 +21,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v6
-        with:
-          version: 9
 
       - name: Setup Node
         uses: actions/setup-node@v6

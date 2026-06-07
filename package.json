@@ -11,8 +11,9 @@
     "lint:fix": "eslint . --fix",
     "lint:css": "stylelint \"src/**/*.{css,astro,svelte}\"",
     "lint:css:fix": "stylelint \"src/**/*.{css,astro,svelte}\" --fix",
-    "format": "prettier --check .",
-    "format:fix": "prettier --write .",
+    "lint:fmt": "prettier --check .",
+    "lint:fmt:fix": "prettier --write .",
+    "lint:ci": "npm run lint && npm run lint:fmt && npm run lint:css",
     "prepare": "husky"
   },
   "dependencies": {
@@ -55,5 +56,6 @@
       "prettier --write"
     ],
     "*.{css,astro,svelte}": "stylelint --fix"
-  }
+  },
+   "packageManager": "pnpm@11.5.1"
 }
