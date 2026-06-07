@@ -19,7 +19,7 @@ const crossOriginIsolation = {
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://example.com',
+	site: 'https://omribarzik.com',
 	integrations: [mdx(), sitemap(), svelte()],
 	// Self-hosted via Astro's Fonts API (https://docs.astro.build/en/guides/fonts/).
 	// Downloaded at build time and served from this origin — no Google CDN link.
