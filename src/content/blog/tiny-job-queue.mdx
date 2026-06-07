@@ -1,0 +1,59 @@
+---
+title: A tiny job queue in 60 lines of Node
+description: Before you reach for Redis and BullMQ, understand the thing they're built on — a queue is a list, a worker, and a concurrency limit.
+pubDate: 2026-04-02
+topic: Node.js
+readingTime: 10 min
+---
+
+Reach for a background queue and the advice is immediate: install Redis, add BullMQ, run a worker process. Sometimes that’s right. Often it’s a distributed system bolted onto a problem that was three variables and a loop. Before you adopt the heavy machinery, it’s worth building the small thing once — because the small thing is what the heavy machinery *is*.
+
+A job queue is three pieces: a list of pending work, a fixed number of workers pulling from it, and a way to wait for the result.
+
+## Concurrency is just a counter
+
+The only real decision a queue makes is *how many jobs run at once*. Too many and you melt the database; one at a time and you’re needlessly slow. So we cap in-flight work with a counter and a pending list:
+
+<Sandbox filename="queue.js" lang="js" badge="Node">{`function createQueue(concurrency) {
+  let active = 0;
+  const pending = [];
+
+  const next = () => {
+    if (active >= concurrency || pending.length === 0) return;
+    active++;
+    const { job, resolve, reject } = pending.shift();
+    Promise.resolve()
+      .then(job)
+      .then(resolve, reject)
+      .finally(() => { active--; next(); }); // free a slot, pull more
+  };
+
+  return (job) =>
+    new Promise((resolve, reject) => {
+      pending.push({ job, resolve, reject });
+      next();
+    });
+}
+
+const run = createQueue(2); // at most 2 jobs at a time
+const sleep = (ms, v) => new Promise((r) => setTimeout(() => r(v), ms));
+
+const order = [];
+await Promise.all(
+  [1, 2, 3, 4, 5].map((n) =>
+    run(() => sleep(10 * n, n)).then((v) => order.push(v))
+  )
+);
+
+console.log("finished order:", order);
+return { concurrency: 2, processed: order.length };`}</Sandbox>
+
+Each finished job frees a slot and calls `next()`, which pulls the following item. The counter never exceeds the limit, so memory and load stay predictable no matter how many jobs you enqueue.
+
+<Callout mark="Note">
+This runs in one process and forgets everything on restart. That’s the feature — and the limit. If losing the queue on a crash is unacceptable, *that’s* the moment Redis earns its place.
+</Callout>
+
+## When to graduate
+
+You outgrow the 60-line version the day you need work to survive a restart, span multiple machines, or retry with backoff across deploys. Until then, a counter and a list will serve a surprising amount of production traffic — and now the “real” queue is just this idea with persistence and a network hop.

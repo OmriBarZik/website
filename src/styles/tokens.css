@@ -1,0 +1,257 @@
+/* ============================================================
+   Design tokens — Sepia theme · warm & literary dev blog
+   Newsreader (serif) · Space Grotesk (labels) · JetBrains Mono (code)
+
+   Three tiers:
+     1. primitives  — raw palette ramps (referenced only by tier 2)
+     2. semantic     — roles components actually use (--text-*, --surface-*,
+                       --primary, --border, …)
+     3. components   — scoped styles reference tier 2 (+ the --code-* /--term- theme)
+
+   Colours are authored in OKLCH (perceptually uniform) with an exact hex
+   fallback for browsers without oklch() — see the @supports block. Scales
+   (spacing/radius/motion/shadow) are global and rem/token-based.
+   ============================================================ */
+
+:root {
+	/* font stacks come from Astro's Fonts API (see astro.config.mjs);
+	   fallbacks are already baked into each --font-* variable */
+	--serif: var(--font-newsreader), 'Georgia', 'Times New Roman', serif;
+	--label: var(--font-space-grotesk), system-ui, sans-serif;
+	--mono: var(--font-jetbrains-mono), ui-monospace, monospace;
+
+	/* ---------- TIER 1 · primitives (hex fallbacks) ---------- */
+
+	/* neutral ramp (warm paper → ink) */
+	--paper: #f3eadd;
+	--paper-2: #fbf5ea;
+	--paper-3: #ece0cf;
+	--ink: #2a2018;
+	--ink-soft: #4a3d2e;
+	--muted: #7c6a54;
+	--faint: #a89a82;
+	--line: #e0d3bd;
+	--line-2: #d2c3a8;
+
+	/* terracotta ramp (brand primary) — 500 = base, 700 = pressed */
+	--terracotta-50: #fef1e8;
+	--terracotta-100: #fddfd1;
+	--terracotta-200: #f7bfa9;
+	--terracotta-300: #e89476;
+	--terracotta-400: #d06946;
+	--terracotta-500: #b5451e;
+	--terracotta-600: #a53d14;
+	--terracotta-700: #97380f;
+	--terracotta-800: #762c0b;
+	--terracotta-900: #552008;
+
+	/* forest ramp (brand secondary) */
+	--forest-50: #eff4eb;
+	--forest-100: #dfe8d7;
+	--forest-200: #bfd2b1;
+	--forest-300: #99b388;
+	--forest-400: #738f61;
+	--forest-500: #4f6b3c;
+	--forest-600: #425b31;
+	--forest-700: #364d28;
+	--forest-800: #283a1e;
+	--forest-900: #1b2814;
+
+	/* code & terminal theme (dark surface palette) */
+	--code-bg: #241b11;
+	--code-bar: #1c150d;
+	--code-text: #e7dcc6;
+	--code-text-dim: #cdbfa6; /* dim body/output foreground */
+	--code-fname: #b6a98f;
+	--code-amber: #e7b65f;
+	--code-amber-strong: #f0c574;
+	--term-out-bg: #1a130b;
+	--term-ok: #aac885;
+	--term-err: #ef8f6b;
+	--term-warn: #e7b65f;
+	--term-muted: #8e8068;
+	--term-cmd: #f0e6d2;
+	--term-cyan: #7fc4d4;
+
+	/* Prism syntax palette (sepia) */
+	--syntax-comment: #8e8068;
+	--syntax-keyword: #e6a3c4;
+	--syntax-function: #e7b65f;
+	--syntax-string: #aac885;
+	--syntax-number: #e2b15e;
+	--syntax-punctuation: #cdbfa6;
+
+	/* window-control dots (code widgets + code block) */
+	--dot-red: #e06c5b;
+	--dot-yellow: var(--code-amber);
+	--dot-green: #9cc06f;
+
+	/* code-chrome overlays (alpha — stay rgb, universally supported) */
+	--code-border: rgb(0 0 0 / 13%); /* outer border on warm bg */
+	--code-hairline: rgb(255 255 255 / 6%); /* inner bar divider   */
+	--code-divider: rgb(255 255 255 / 13%); /* button/dashed border */
+	--code-divider-strong: rgb(255 255 255 / 27%); /* hover border  */
+	--code-fg-bright: #fff; /* hover text on dark chrome */
+
+	/* ---------- TIER 2 · semantic roles ---------- */
+
+	/* brand */
+	--primary: var(--terracotta-500);
+	--primary-strong: var(--terracotta-700);
+	--primary-soft: var(--terracotta-50);
+	--primary-border: var(--terracotta-200);
+	--secondary: var(--forest-500);
+	--secondary-strong: var(--forest-700);
+	--secondary-soft: var(--forest-50);
+
+	/* text */
+	--text-heading: var(--ink);
+	--text-body: var(--ink);
+	--text-soft: var(--ink-soft);
+	--text-muted: var(--muted);
+	--text-faint: var(--faint);
+	--text-link: var(--primary);
+	--text-link-hover: var(--primary-strong);
+	--text-on-primary: var(--paper-2);
+
+	/* surfaces */
+	--surface: var(--paper);
+	--surface-raised: var(--paper-2);
+	--surface-sunken: var(--paper-3);
+	--surface-invert: var(--ink);
+	--text-on-invert: var(--paper-2);
+
+	/* borders */
+	--border: var(--line);
+	--border-strong: var(--line-2);
+
+	/* topic accents */
+	--topic-ts: #2f5fae;
+	--topic-docker: #1f6f9e;
+	--topic-node: var(--secondary);
+
+	/* ---------- spacing · 8pt grid derived from --base-unit ----------
+	   --base-unit is the 8px step; the number = multiplier × 100
+	   (so 100 = 1 step = 8px, 150 = 1.5 steps = 12px, …). */
+	--base-unit: 0.5rem; /* 8px — the grid step everything derives from */
+	--space-50: calc(var(--base-unit) * 0.5); /*  4px — half-step */
+	--space-100: var(--base-unit); /*  8px — base unit */
+	--space-150: calc(var(--base-unit) * 1.5); /* 12px — half-step */
+	--space-200: calc(var(--base-unit) * 2); /* 16px — 1rem */
+	--space-250: calc(var(--base-unit) * 2.5); /* 20px — half-step */
+	--space-300: calc(var(--base-unit) * 3); /* 24px */
+	--space-400: calc(var(--base-unit) * 4); /* 32px */
+	--space-500: calc(var(--base-unit) * 5); /* 40px */
+	--space-600: calc(var(--base-unit) * 6); /* 48px */
+	--space-700: calc(var(--base-unit) * 7); /* 56px */
+	--space-800: calc(var(--base-unit) * 8); /* 64px */
+	--space-1000: calc(var(--base-unit) * 10); /* 80px */
+
+	/* ---------- radius · same base-unit grid ---------- */
+	--radius-50: calc(var(--base-unit) * 0.5); /*  4px */
+	--radius-100: var(--base-unit); /*  8px — default */
+	--radius-150: calc(var(--base-unit) * 1.5); /* 12px */
+	--radius-200: calc(var(--base-unit) * 2); /* 16px */
+	--radius-pill: 100px; /* chips / tags */
+	--radius-full: 50%; /* dots / icon buttons */
+
+	/* ---------- motion ---------- */
+	--duration-fast: 120ms; /* button press / transforms     */
+	--duration-normal: 150ms; /* colour & border hovers        */
+	--duration-slow: 250ms; /* reveals (sandbox output)      */
+	--ease: cubic-bezier(0.4, 0, 0.2, 1);
+	--ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+	/* ---------- shadow · layered, warm-tinted, overhead light ---------- */
+	--shadow-hsl: 30deg 25% 18%; /* warm ink, not pure black */
+	--shadow-sm:
+		0 1px 1px hsl(var(--shadow-hsl) / 6%),
+		0 2px 2px hsl(var(--shadow-hsl) / 6%);
+	--shadow:
+		0 1px 1px hsl(var(--shadow-hsl) / 4%),
+		0 2px 3px hsl(var(--shadow-hsl) / 5%),
+		0 6px 10px -4px hsl(var(--shadow-hsl) / 7%);
+	--shadow-md:
+		0 1px 1px hsl(var(--shadow-hsl) / 4%),
+		0 3px 5px hsl(var(--shadow-hsl) / 6%),
+		0 8px 14px -4px hsl(var(--shadow-hsl) / 9%),
+		0 16px 28px -8px hsl(var(--shadow-hsl) / 10%);
+	--shadow-lg:
+		0 2px 3px hsl(var(--shadow-hsl) / 5%),
+		0 6px 10px -2px hsl(var(--shadow-hsl) / 8%),
+		0 14px 24px -6px hsl(var(--shadow-hsl) / 10%),
+		0 26px 44px -12px hsl(var(--shadow-hsl) / 12%);
+
+	/* ---------- layout widths ---------- */
+	--wrap: 1120px;
+	--read: 720px;
+}
+
+/* Modern browsers: same palette in OKLCH (perceptually uniform). Values are
+   tuned so each matches its hex fallback above — no intended visual change. */
+@supports (color: oklch(0% 0 0)) {
+	:root {
+		/* neutrals */
+		--paper: oklch(94.1% 0.02 77.3deg);
+		--paper-2: oklch(97.2% 0.016 82.8deg);
+		--paper-3: oklch(91.2% 0.026 76.8deg);
+		--ink: oklch(25.3% 0.021 60.3deg);
+		--ink-soft: oklch(36.9% 0.03 70.7deg);
+		--muted: oklch(53.5% 0.04 72.4deg);
+		--faint: oklch(69.2% 0.038 81.2deg);
+		--line: oklch(87.2% 0.033 81deg);
+		--line-2: oklch(82.2% 0.04 82.3deg);
+
+		/* terracotta */
+		--terracotta-50: oklch(96.5% 0.018 55deg);
+		--terracotta-100: oklch(92.5% 0.038 48deg);
+		--terracotta-200: oklch(85% 0.072 43deg);
+		--terracotta-300: oklch(74.5% 0.11 40.5deg);
+		--terracotta-400: oklch(63.5% 0.14 39deg);
+		--terracotta-500: oklch(53.8% 0.154 38.3deg);
+		--terracotta-600: oklch(50% 0.146 39.5deg);
+		--terracotta-700: oklch(47% 0.137 40.3deg);
+		--terracotta-800: oklch(39.5% 0.112 41deg);
+		--terracotta-900: oklch(32% 0.086 42deg);
+
+		/* forest */
+		--forest-50: oklch(96% 0.012 130deg);
+		--forest-100: oklch(92% 0.026 131deg);
+		--forest-200: oklch(84% 0.05 132deg);
+		--forest-300: oklch(73.5% 0.066 133deg);
+		--forest-400: oklch(61.5% 0.074 133.5deg);
+		--forest-500: oklch(49.3% 0.078 133.6deg);
+		--forest-600: oklch(44% 0.072 134deg);
+		--forest-700: oklch(39% 0.064 134.5deg);
+		--forest-800: oklch(32.5% 0.052 135deg);
+		--forest-900: oklch(26% 0.04 135.5deg);
+
+		/* code & terminal */
+		--code-bg: oklch(23% 0.023 69.2deg);
+		--code-bar: oklch(20.2% 0.019 70.2deg);
+		--code-text: oklch(89.7% 0.032 84.6deg);
+		--code-text-dim: oklch(81% 0.038 82.1deg);
+		--code-fname: oklch(73.9% 0.039 84.6deg);
+		--code-amber: oklch(80.3% 0.119 80.1deg);
+		--code-amber-strong: oklch(84.4% 0.111 82.1deg);
+		--term-out-bg: oklch(19.3% 0.019 70.1deg);
+		--term-ok: oklch(79.4% 0.096 128deg);
+		--term-err: oklch(74.3% 0.127 41.1deg);
+		--term-warn: oklch(80.3% 0.119 80.1deg);
+		--term-muted: oklch(60.6% 0.039 81.1deg);
+		--term-cmd: oklch(92.8% 0.029 84.6deg);
+		--term-cyan: oklch(78% 0.073 214deg);
+		--syntax-comment: oklch(60.6% 0.039 81.1deg);
+		--syntax-keyword: oklch(78.9% 0.089 348.3deg);
+		--syntax-function: oklch(80.3% 0.119 80.1deg);
+		--syntax-string: oklch(79.4% 0.096 128deg);
+		--syntax-number: oklch(78.8% 0.116 78.9deg);
+		--syntax-punctuation: oklch(81% 0.038 82.1deg);
+		--dot-red: oklch(66.6% 0.148 30deg);
+		--dot-green: oklch(76.2% 0.115 128.4deg);
+
+		/* topic accents */
+		--topic-ts: oklch(49.5% 0.137 259.9deg);
+		--topic-docker: oklch(51.7% 0.105 239.9deg);
+	}
+}

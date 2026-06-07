@@ -1,0 +1,114 @@
+---
+title: Type-safe environment variables without the boilerplate
+description: Stop sprinkling `process.env.FOO!` across your codebase. Validate once, at boot, and hand the rest of your app a fully-typed config.
+pubDate: 2026-05-28
+topic: TypeScript
+readingTime: 9 min
+heroCaption: A config object you can trust — validated once, typed everywhere.
+series: { name: "TypeScript at the boundaries", part: 2, total: 4 }
+---
+
+Every Node app eventually grows a tangle of `process.env` reads — a database URL here, a feature flag there, a port number cast with a hopeful `Number(...)`. TypeScript can’t help you, because as far as it knows every one of those values is `string | undefined`. So you reach for the non-null assertion, and ship a footgun.
+
+There’s a better shape for this, and it doesn’t need a validation library. The idea: **parse your environment exactly once**, when the process starts, into a frozen object with real types. If something is missing or malformed, the app refuses to boot — loudly, with a useful message — instead of failing three requests later in production.
+
+## The problem with reading env inline
+
+Here’s the pattern you’ve almost certainly written. It looks innocent:
+
+<CodeBlock filename="db.ts" lang="ts">{`// scattered across the codebase, repeated, untyped
+const url   = process.env.DATABASE_URL!;          // string, you hope
+const port  = Number(process.env.PORT);           // NaN if unset
+const debug = process.env.DEBUG === "true";        // "false"? "0"? who knows`}</CodeBlock>
+
+Three different failure modes, three different places to fix them, and not one of them will be caught at compile time. The `!` tells TypeScript to trust you. It shouldn’t.
+
+<Callout mark="Why">
+Environment variables are an *input boundary*, just like an HTTP request body. The rule at every boundary is the same: **parse, don’t cast.** Validate the untrusted shape into a trusted one, once.
+</Callout>
+
+## Parse once, at boot
+
+Instead, write a single function that reads the raw environment, checks every value, and returns a typed object. Edit the example below and run it — it executes right here:
+
+<Sandbox filename="env.js" lang="js" badge="Node">{`// A tiny env parser — no library. Edit the values & hit Run ▸
+function num(name, raw, fallback) {
+  if (raw === undefined) {
+    if (fallback !== undefined) return fallback;
+    throw new Error(\`Missing required env: \${name}\`);
+  }
+  const n = Number(raw);
+  if (Number.isNaN(n)) throw new Error(\`\${name} must be a number, got "\${raw}"\`);
+  return n;
+}
+function str(name, raw) {
+  if (!raw) throw new Error(\`Missing required env: \${name}\`);
+  return raw;
+}
+function bool(raw) { return raw === "true" || raw === "1"; }
+
+// pretend this is process.env  — try deleting DATABASE_URL!
+const raw = {
+  DATABASE_URL: "postgres://localhost/app",
+  PORT: "3000",
+  DEBUG: "true",
+};
+
+const config = Object.freeze({
+  databaseUrl: str("DATABASE_URL", raw.DATABASE_URL),
+  port:        num("PORT", raw.PORT, 8080),
+  debug:       bool(raw.DEBUG),
+});
+
+console.log("✓ config loaded:", config);
+return config;`}</Sandbox>
+
+The whole app now imports `config` and gets autocompletion, real types, and a guarantee: if this object exists, every field in it is valid. Delete `DATABASE_URL` above and run again — notice the process throws immediately, with the name of the thing that’s missing.
+
+## One source of truth
+
+Because the parser runs at startup, the failure happens at the only time it’s cheap to fix: before you’ve served a single request. Compare the two timelines:
+
+> “A config error at boot is a deploy that never goes live. The same error read inline is a 500 at 3am.”
+> <cite>— the entire argument, in one sentence</cite>
+
+- **Inline reads** fail lazily, per-code-path, often only under the exact request that touches them.
+- **A boot-time parse** fails eagerly, once, with a message that names the variable.
+- Your editor now *knows* `config.port` is a `number` — no casting, no guessing.
+
+<Figure ratio="16/8" caption="Fig 1. Untrusted env in, frozen typed config out — the boundary crossed exactly once." />
+
+## Wiring it into the container
+
+This pattern pairs beautifully with Docker: declare the variables your image expects, and a missing one fails the container’s healthcheck instead of lurking. Try the commands in the simulated shell below:
+
+<Terminal
+  prompt="~/app $"
+  title="run with env"
+  hint="docker run --env-file .env app"
+  intro={["[muted]# the image expects DATABASE_URL, PORT, DEBUG. try 'docker run app'[/muted]"]}
+  demo="docker run app"
+  commands={{
+    "docker run app": [
+      "[err]✖ Missing required env: DATABASE_URL[/err]",
+      "[muted]container exited (1) — boot-time validation caught it[/muted]"
+    ],
+    "docker run --env-file .env app": [
+      "[muted]loading .env … DATABASE_URL, PORT, DEBUG[/muted]",
+      "[ok]✓ config loaded[/ok]",
+      "[ok]→ server listening on :3000[/ok]"
+    ],
+    "cat .env": ["DATABASE_URL=postgres://db/app", "PORT=3000", "DEBUG=false"],
+    "ls": ["Dockerfile  .env  env.js  index.js  package.json"]
+  }}
+/>
+
+<Callout kind="note" mark="Tip">
+Keep the parser dependency-free in small projects. When your schema grows past a dozen fields or needs nested shapes, reach for a runtime validator — but the *boundary* stays in exactly this one file.
+</Callout>
+
+## Where to take it next
+
+Once the boundary is a single function, everything good composes on top of it: load different files per environment, redact secrets from logs, or generate a `.env.example` straight from the parser. But the core idea never changes — **cross the boundary once, and trust everything on the other side.**
+
+That’s the whole series in miniature. In part 3 we’ll do the same thing for untrusted JSON coming off the network.

@@ -1,0 +1,54 @@
+---
+title: "Parsing, not casting: trusting data at the boundary"
+description: A type assertion is a promise you make to the compiler and break at runtime. Parsing is how you keep it.
+pubDate: 2026-04-16
+topic: TypeScript
+readingTime: 8 min
+series: { name: "TypeScript at the boundaries", part: 1, total: 4 }
+---
+
+Every bug that reaches production through a type system does so the same way: someone told the compiler a value had a shape it didn’t actually have. `as User`. `<string>x`. `json!`. The annotation is a claim about runtime reality — and the compiler believes you completely, because believing you is its entire job.
+
+The fix isn’t more annotations. It’s drawing a line around the edge of your program where untrusted data becomes trusted, and **never asserting across it** — parsing instead.
+
+## Casting is a lie the compiler can't check
+
+A cast changes what the compiler thinks without changing what exists:
+
+<CodeBlock filename="cast.ts" lang="ts">{`const user = JSON.parse(body) as { id: number; name: string };
+// user.id is "typed" number — but it's whatever the network sent.
+// If the client sent { id: "42" }, every downstream \`user.id * 2\` is wrong.`}</CodeBlock>
+
+The annotation propagates a falsehood through the rest of the file. Nothing fails here; it fails three functions away, with a stack trace that points at the symptom, never the lie.
+
+## Parsing returns proof
+
+A parser is just a function `unknown -> T` that throws (or returns an error) when the value doesn’t match. Its return type is *earned*, not asserted. Run it:
+
+<Sandbox filename="parse.js" lang="js" badge="Node">{`function parseUser(input) {
+  if (typeof input !== "object" || input === null) throw new Error("not an object");
+  const { id, name } = input;
+  if (typeof id !== "number") throw new Error(\`id must be a number, got \${typeof id}\`);
+  if (typeof name !== "string") throw new Error("name must be a string");
+  return { id, name };
+}
+
+// the network sent a string id — parsing catches it at the boundary
+try {
+  const user = parseUser(JSON.parse('{"id":"42","name":"Ada"}'));
+  console.log("ok", user);
+} catch (e) {
+  console.error(e.message);
+}
+
+return parseUser({ id: 7, name: "Grace" });`}</Sandbox>
+
+Past the `parseUser` call, `user` genuinely *is* the type — because anything that wasn’t threw before it got here.
+
+<Callout mark="Rule">
+Assertions move type errors to runtime and hide them. Parsers move them to the boundary and surface them. Same information, opposite ergonomics.
+</Callout>
+
+## Where to draw the line
+
+Put a parser at every place untrusted data enters: HTTP bodies, query strings, env vars, message-queue payloads, files on disk. Inside the line you can trust your types completely. Outside it, you trust nothing. Next in the series: applying exactly this to [environment variables](/blog/type-safe-env/).

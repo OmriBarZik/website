@@ -1,49 +1,245 @@
 ---
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import FeaturedCard from '../components/FeaturedCard.astro';
+import PostList from '../components/PostList.astro';
+import Sandbox from '../components/Sandbox.astro';
+import Terminal from '../components/Terminal.astro';
+import Subscribe from '../components/Subscribe.svelte';
+
+const posts = (await getCollection('blog')).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+const featured = posts[0];
+
+const pipelineCode = `// A tiny functional pipeline — edit me, then hit Run ▸
+const pipe = (...fns) => (x) => fns.reduce((v, f) => f(v), x);
+
+const slugify = pipe(
+  (s) => s.trim().toLowerCase(),
+  (s) => s.replace(/[^a-z0-9]+/g, "-"),
+  (s) => s.replace(/^-+|-+$/g, "")
+);
+
+console.log(slugify("  Hello, fake frontend!  "));
+return slugify("TypeScript & Docker, 2026");`;
+
+const dockerTerminal = {
+	intro: [
+		"[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]",
+	],
+	demo: 'docker build -t app .',
+	commands: {
+		'docker build -t app .': [
+			'[muted]=> [internal] load build definition[/muted]',
+			'[muted]=> [builder 1/4] FROM node:22-alpine[/muted]',
+			'[muted]=> [builder 2/4] COPY package*.json ./[/muted]',
+			'[muted]=> [builder 3/4] RUN npm ci[/muted]   [ok]✓ 4.1s[/ok]',
+			'[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]',
+			'[muted]=> [stage-1 1/2] COPY --from=builder /app/dist ./[/muted]',
+			'[ok]✓ built app:latest  ·  final image 78MB[/ok]',
+		],
+		'docker run -p 3000:3000 app': [
+			'[ok]→ server listening on :3000[/ok]',
+			'[muted]press ctrl-c to stop[/muted]',
+		],
+		'docker images': [
+			'REPOSITORY   TAG      SIZE',
+			'app          latest   78MB',
+			'node         22-alpine  142MB',
+		],
+		ls: ['Dockerfile   index.js   package.json   tsconfig.json'],
+	},
+};
 ---
 
-<!doctype html>
-<html lang="en">
-	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-	</head>
-	<body>
-		<Header />
-		<main>
-			<h1>🧑‍🚀 Hello, Astronaut!</h1>
-			<p>
-				Welcome to the official <a href="https://astro.build/">Astro</a> blog starter template. This template
-				serves as a lightweight, minimally-styled starting point for anyone looking to build a personal
-				website, blog, or portfolio with Astro.
-			</p>
-			<p>
-				This template comes with a few integrations already configured in your
-				<code>astro.config.mjs</code> file. You can customize your setup with
-				<a href="https://astro.build/integrations">Astro Integrations</a> to add tools like Tailwind,
-				React, or Vue to your project.
-			</p>
-			<p>Here are a few ideas on how to get started with the template:</p>
-			<ul>
-				<li>Edit this page in <code>src/pages/index.astro</code></li>
-				<li>Edit the site header items in <code>src/components/Header.astro</code></li>
-				<li>Add your name to the footer in <code>src/components/Footer.astro</code></li>
-				<li>Check out the included blog posts in <code>src/content/blog/</code></li>
-				<li>Customize the blog post page layout in <code>src/layouts/BlogPost.astro</code></li>
-			</ul>
-			<p>
-				Have fun! If you get stuck, remember to
-				<a href="https://docs.astro.build/">read the docs</a>
-				or <a href="https://astro.build/chat">join us on Discord</a> to ask questions.
-			</p>
-			<p>
-				Looking for a blog template with a bit more personality? Check out
-				<a href="https://github.com/Charca/astro-blog-template">astro-blog-template</a>
-				by <a href="https://twitter.com/Charca">Maxi Ferreira</a>.
-			</p>
-		</main>
-		<Footer />
-	</body>
-</html>
+<BaseLayout active="latest">
+	<!-- HERO -->
+	<section class="wrap hero">
+		<div class="hero-grid">
+			<div>
+				<span class="kicker">The notebook of a backend engineer</span>
+				<h1>Writing about the things that <em>actually</em> ship.</h1>
+				<p class="lede">
+					Slow, careful guides on TypeScript, Docker and Node.js — every example
+					runs in a sandbox right here on the page. No setup, no “it works on my
+					machine.”
+				</p>
+				<div class="cta-row">
+					{
+						featured && (
+							<a class="btn btn-primary" href={`/blog/${featured.id}/`}>
+								Read the latest <span class="arr">→</span>
+							</a>
+						)
+					}
+					<a class="btn btn-ghost" href="#latest">All posts</a>
+				</div>
+				<div class="by">
+					<span class="mono cwd">~/</span>
+					<span>A new guide most weeks — TypeScript, Docker &amp; Node.js.</span>
+				</div>
+			</div>
+
+			{featured && <FeaturedCard post={featured} />}
+		</div>
+	</section>
+
+	<!-- LATEST (centerpiece) -->
+	<section class="section" id="latest">
+		<div class="wrap">
+			<div class="sec-head">
+				<div>
+					<span class="kicker">The writing</span>
+					<h2>Latest posts</h2>
+					<p class="desc">
+						Everything published so far — new guides land most weeks.
+					</p>
+				</div>
+				<a class="btn btn-text" href="/rss.xml">RSS feed <span class="arr">→</span></a>
+			</div>
+
+			<PostList posts={posts} />
+		</div>
+	</section>
+
+	<!-- INTERACTIVE SHOWCASE -->
+	<section class="section alt" id="playground">
+		<div class="wrap">
+			<div class="sec-head">
+				<div>
+					<span class="kicker">Run it, don't just read it</span>
+					<h2>Every snippet is a sandbox.</h2>
+					<p class="desc">
+						The thing that makes these guides different: edit the code and hit run —
+						it executes live in your browser, no setup.
+					</p>
+				</div>
+			</div>
+			<div class="demo-grid">
+				<div>
+					<div class="kicker demo-label demo-label-node">
+						▶ Node sandbox · editable
+					</div>
+					<Sandbox filename="pipeline.js" lang="js" badge="Node">{pipelineCode}</Sandbox>
+				</div>
+				<div>
+					<div class="kicker demo-label demo-label-docker">
+						▶ Container terminal · simulated
+					</div>
+					<Terminal
+						prompt="~/app $"
+						title="multi-stage build"
+						hint="docker build -t app ."
+						intro={dockerTerminal.intro}
+						demo={dockerTerminal.demo}
+						commands={dockerTerminal.commands}
+					/>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- SUBSCRIBE -->
+	<section class="wrap subscribe-section" id="about">
+		<Subscribe client:visible />
+	</section>
+</BaseLayout>
+
+<style>
+	/* hero */
+	.hero {
+		padding-top: var(--space-800);
+		padding-bottom: var(--space-700);
+	}
+
+	.hero-grid {
+		display: grid;
+		grid-template-columns: 1.15fr 0.85fr;
+		gap: var(--space-700);
+		align-items: center;
+	}
+
+	.hero h1 {
+		font-weight: 500;
+		font-size: 60px;
+		line-height: 1.02;
+		letter-spacing: -0.02em;
+		margin: var(--space-200) 0 0;
+		text-wrap: balance;
+	}
+
+	.hero h1 em {
+		font-style: italic;
+		color: var(--primary);
+	}
+
+	.hero .lede {
+		font-size: 20px;
+		color: var(--text-soft);
+		line-height: 1.5;
+		margin: var(--space-300) 0 0;
+		max-width: 30em;
+	}
+
+	.hero .cta-row {
+		display: flex;
+		gap: var(--space-150);
+		margin-top: var(--space-400);
+		align-items: center;
+	}
+
+	.hero .by {
+		display: flex;
+		align-items: center;
+		gap: var(--space-150);
+		margin-top: var(--space-400);
+		color: var(--text-muted);
+		font-family: var(--label);
+		font-size: 13px;
+	}
+
+	.hero .by .cwd {
+		color: var(--primary);
+		font-size: 12px;
+	}
+
+	/* interactive showcase */
+	.demo-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: var(--space-300);
+	}
+
+	.demo-label {
+		margin-bottom: var(--space-100);
+	}
+
+	.demo-label-node {
+		color: var(--secondary);
+	}
+
+	.demo-label-docker {
+		color: var(--topic-docker);
+	}
+
+	/* subscribe section spacing */
+	.subscribe-section {
+		padding: var(--space-250) var(--space-400) var(--space-800);
+	}
+
+	@media (width <= 900px) {
+		.hero-grid {
+			grid-template-columns: 1fr;
+			gap: var(--space-500);
+		}
+
+		.hero h1 {
+			font-size: 46px;
+		}
+
+		.demo-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

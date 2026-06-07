@@ -1,20 +1,52 @@
 ---
 import { type CollectionEntry, getCollection, render } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import PostLayout from '../../layouts/PostLayout.astro';
+import Sandbox from '../../components/Sandbox.astro';
+import Terminal from '../../components/Terminal.astro';
+import Callout from '../../components/Callout.astro';
+import Figure from '../../components/Figure.astro';
+import CodeBlock from '../../components/CodeBlock.astro';
 
 export async function getStaticPaths() {
 	const posts = await getCollection('blog');
 	return posts.map((post) => ({
 		params: { slug: post.id },
-		props: post,
+		props: { post, posts },
 	}));
 }
-type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
-const { Content } = await render(post);
+interface Props {
+	post: CollectionEntry<'blog'>;
+	posts: CollectionEntry<'blog'>[];
+}
+
+const { post, posts } = Astro.props;
+const { Content, headings } = await render(post);
+
+// prev/next within the same series
+let prev: { href: string; label: string; title: string } | undefined;
+let next: { href: string; label: string; title: string } | undefined;
+const series = post.data.series;
+if (series) {
+	const sibs = posts.filter((p) => p.data.series?.name === series.name);
+	const at = (n: number) => sibs.find((p) => p.data.series?.part === n);
+	const pv = at(series.part - 1);
+	const nx = at(series.part + 1);
+	if (pv)
+		prev = {
+			href: `/blog/${pv.id}/`,
+			label: `← Part ${pv.data.series!.part}`,
+			title: pv.data.title,
+		};
+	if (nx)
+		next = {
+			href: `/blog/${nx.id}/`,
+			label: `Part ${nx.data.series!.part} →`,
+			title: nx.data.title,
+		};
+}
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<PostLayout data={post.data} headings={headings} prev={prev} next={next}>
+	<Content components={{ Sandbox, Terminal, Callout, Figure, CodeBlock }} />
+</PostLayout>

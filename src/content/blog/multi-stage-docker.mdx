@@ -1,0 +1,81 @@
+---
+title: Multi-stage Docker builds that actually cache
+description: Most Node Dockerfiles reinstall the world on every code change. A two-line reorder fixes it.
+pubDate: 2026-05-14
+topic: Docker
+readingTime: 12 min
+---
+
+The first Dockerfile everyone writes copies the whole project in, runs `npm install`, and builds. It works — and it’s agonizingly slow, because changing a single line of source code busts the cache on the dependency install. You wait three minutes to rebuild what didn’t change.
+
+The whole game with Docker layer caching is **ordering things from least to most frequently changed.** Your dependencies change weekly; your code changes every save. So they must not live in the same layer.
+
+## Copy the manifest before the source
+
+This is the entire trick. Copy `package*.json`, install, *then* copy the rest:
+
+<CodeBlock filename="Dockerfile" lang="docker">{`# ---- builder ----
+FROM node:22-alpine AS builder
+WORKDIR /app
+
+# changes weekly → cached across most builds
+COPY package*.json ./
+RUN npm ci
+
+# changes every commit → only this layer rebuilds
+COPY . .
+RUN npm run build`}</CodeBlock>
+
+Because `COPY package*.json` happens before `COPY . .`, editing a source file leaves the `npm ci` layer untouched. Docker reuses it. Installs drop from minutes to zero on the common path.
+
+## Ship the dist, not the toolchain
+
+The second stage starts from a clean image and copies only the built output — no dev dependencies, no source, no compiler:
+
+<CodeBlock filename="Dockerfile" lang="docker">{`# ---- runtime ----
+FROM node:22-alpine AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY package*.json ./
+RUN npm ci --omit=dev
+COPY --from=builder /app/dist ./dist
+
+USER node
+CMD ["node", "dist/index.js"]`}</CodeBlock>
+
+The final image carries production deps and compiled JS — nothing else. Watch the layers resolve:
+
+<Terminal
+  prompt="~/app $"
+  title="multi-stage build"
+  hint="docker build -t app ."
+  intro={["[muted]# a multi-stage Dockerfile, simulated. try 'docker build -t app .'[/muted]"]}
+  demo="docker build -t app ."
+  commands={{
+    "docker build -t app .": [
+      "[muted]=> [internal] load build definition[/muted]",
+      "[muted]=> [builder 1/4] FROM node:22-alpine[/muted]",
+      "[muted]=> CACHED [builder 2/4] COPY package*.json ./[/muted]",
+      "[muted]=> CACHED [builder 3/4] RUN npm ci[/muted]",
+      "[muted]=> [builder 4/4] RUN npm run build[/muted]   [ok]✓ 2.3s[/ok]",
+      "[muted]=> [runtime 3/3] COPY --from=builder /app/dist ./dist[/muted]",
+      "[ok]✓ built app:latest  ·  final image 78MB[/ok]"
+    ],
+    "docker images": [
+      "REPOSITORY   TAG      SIZE",
+      "app          latest   78MB",
+      "node         22-alpine  142MB"
+    ],
+    "docker run -p 3000:3000 app": ["[ok]→ server listening on :3000[/ok]"],
+    "ls": ["Dockerfile  .dockerignore  src  package.json  tsconfig.json"]
+  }}
+/>
+
+<Callout kind="note" mark="Tip">
+Add a `.dockerignore` with `node_modules` and `dist`. Otherwise `COPY . .` drags your host’s `node_modules` into the image and silently busts the cache you just worked to build.
+</Callout>
+
+## The payoff
+
+A clean dependency layer plus a slim runtime stage gets you fast incremental builds *and* a small, attack-surface-minimal image. The Docker output above is illustrative — but the layer ordering is the real, load-bearing idea.

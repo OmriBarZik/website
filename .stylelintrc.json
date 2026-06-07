@@ -1,0 +1,16 @@
+{
+	"extends": [
+		"stylelint-config-standard",
+		"stylelint-config-html/svelte",
+		"stylelint-config-html/astro"
+	],
+	"rules": {
+		"selector-pseudo-class-no-unknown": [
+			true,
+			{ "ignorePseudoClasses": ["global"] }
+		],
+		"no-descending-specificity": null,
+		"custom-property-empty-line-before": null,
+		"declaration-empty-line-before": null
+	}
+}

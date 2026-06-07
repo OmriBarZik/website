@@ -1,0 +1,16 @@
+# Security headers (Netlify/Cloudflare-style _headers). Mirror these at your
+# host of choice (Vercel: vercel.json "headers"; etc.).
+#
+# - COOP/COEP: cross-origin isolation, required for WebContainers
+#   (window.crossOriginIsolated must be true). `credentialless` is used so no
+#   subresource needs CORP headers.
+# - The main Content-Security-Policy is emitted per-page by Astro as a
+#   <meta http-equiv> (it auto-hashes inline island scripts/styles). The header
+#   below only carries `frame-ancestors`, which <meta> cannot express.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless
+  Content-Security-Policy: frame-ancestors 'none'
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

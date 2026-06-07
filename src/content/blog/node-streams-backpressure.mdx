@@ -1,0 +1,78 @@
+---
+title: "Streams in Node: backpressure, finally explained"
+description: Backpressure isn't an advanced topic — it's the one thing streams exist to give you. Here's the whole idea.
+pubDate: 2026-04-30
+topic: Node.js
+readingTime: 15 min
+---
+
+You can read a 10 GB file in Node on a machine with 512 MB of RAM, and it just works. No swapping, no out-of-memory crash. The thing that makes that possible has an intimidating name — **backpressure** — and a genuinely simple idea behind it: a slow consumer is allowed to tell a fast producer to wait.
+
+Miss it, and your “streaming” code quietly buffers the entire input in memory while you weren’t looking. Understand it, and constant-memory pipelines stop feeling like magic.
+
+## The leak hiding in a for-await loop
+
+Here’s code that looks like streaming and isn’t. Each chunk kicks off an async write, but nothing waits for those writes to drain:
+
+<CodeBlock filename="leak.js" lang="js">{`for await (const chunk of readable) {
+  writable.write(transform(chunk)); // return value ignored!
+}
+// reads as fast as the disk allows; writes pile up in a buffer.
+// memory tracks the SPEED GAP between read and write, unbounded.`}</CodeBlock>
+
+`writable.write()` returns `false` when its internal buffer is full. Ignoring that return is the entire bug: you’ve told the producer nothing, so it never slows down.
+
+## Backpressure is just a boolean and an event
+
+Honour the signal and memory stays flat. When `write()` says `false`, stop and wait for `'drain'`:
+
+<Sandbox filename="backpressure.js" lang="js" badge="Node">{`// simulate a fast producer and a slow consumer
+function makeSink(capacity) {
+  let buffered = 0;
+  return {
+    write(n) { buffered += n; return buffered < capacity; }, // false = full
+    drain()  { buffered = 0; },                              // consumer caught up
+  };
+}
+
+const sink = makeSink(100);
+let highWater = 0, paused = 0;
+let pending = 0;
+
+for (let i = 0; i < 10; i++) {
+pending += 30;
+const ok = sink.write(30);
+highWater = Math.max(highWater, pending);
+if (!ok) { paused++; sink.drain(); pending = 0; } // wait for 'drain'
+}
+
+console.log("times we paused the producer:", paused);
+return { highWaterMark: highWater, stayedBounded: highWater <= 100 };`}</Sandbox>
+
+The producer pauses whenever the buffer fills and resumes on drain. Peak memory is bounded by the buffer size — not by how much faster the reader is than the writer.
+
+<Callout mark="Why">
+  A stream without backpressure is just an array you’re building one chunk at a
+  time. The pause/resume handshake is the *only* thing separating streaming from
+  buffering.
+</Callout>
+
+## Let pipeline do it for you
+
+You almost never wire this by hand. `stream.pipeline` propagates backpressure, forwards errors, and cleans up every stream when any one of them fails:
+
+<CodeBlock filename="pipeline.js" lang="js">{`import { pipeline } from "node:stream/promises";
+import { createReadStream, createWriteStream } from "node:fs";
+import { createGzip } from "node:zlib";
+
+await pipeline(
+createReadStream("huge.log"),
+createGzip(),
+createWriteStream("huge.log.gz"),
+);
+// constant memory, regardless of file size — the read pauses
+// whenever gzip or the disk falls behind.`}
+
+</CodeBlock>
+
+That’s the whole topic. Backpressure isn’t advanced; it’s the one promise streams make. Everything else — pipes, transforms, async iterators — is built to keep that promise for you.

@@ -9,11 +9,16 @@ const blog = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
-			description: z.string(),
-			// Transform string to Date object
+			description: z.string(), // → standfirst
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
-			heroImage: z.optional(image()),
+			topic: z.enum(['TypeScript', 'Docker', 'Node.js']),
+			readingTime: z.string(), // e.g. "9 min"
+			heroImage: image().optional(),
+			heroCaption: z.string().optional(),
+			series: z
+				.object({ name: z.string(), part: z.number(), total: z.number() })
+				.optional(),
 		}),
 });
 
