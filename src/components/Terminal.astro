@@ -5,29 +5,29 @@
 import TerminalIsland from './Terminal.svelte';
 
 interface Props {
-	prompt?: string;
-	title?: string;
-	hint?: string;
-	intro?: string[];
-	demo?: string;
-	commands?: Record<string, string[]>;
+  prompt?: string;
+  title?: string;
+  hint?: string;
+  intro?: string[];
+  demo?: string;
+  commands?: Record<string, string[]>;
 }
 const {
-	prompt = '~ $',
-	title = 'terminal',
-	hint = 'help',
-	intro,
-	demo,
-	commands,
+  prompt = '~ $',
+  title = 'terminal',
+  hint = 'help',
+  intro,
+  demo,
+  commands,
 } = Astro.props;
 ---
 
 <TerminalIsland
-	client:visible
-	prompt={prompt}
-	title={title}
-	hint={hint}
-	intro={intro}
-	demo={demo}
-	commands={commands}
+  client:visible
+  prompt={prompt}
+  title={title}
+  hint={hint}
+  intro={intro}
+  demo={demo}
+  commands={commands}
 />
