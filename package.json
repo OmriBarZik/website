@@ -57,5 +57,5 @@
     ],
     "*.{css,astro,svelte}": "stylelint --fix"
   },
-   "packageManager": "pnpm@11.5.1"
+  "packageManager": "pnpm@11.5.1"
 }
