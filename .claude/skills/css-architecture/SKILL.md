@@ -42,6 +42,28 @@ instead of Sass files + BEM.
 - Scoped component styles don't need namespacing prefixes — the scope _is_ the
   namespace.
 
+## Layout: reach for grid, drop the wrappers
+
+The markup should carry meaning, not scaffolding. Let CSS place elements; don't
+nest elements to fake a layout.
+
+- **Prefer CSS Grid** (`grid-template-areas`, `subgrid`, `grid-template-columns`)
+  to position **direct children**. Don't add a wrapper `<div>`/`<span>` whose only
+  job is to group siblings for layout — name areas and place the children instead.
+  Areas also span cleanly (one cell across two rows) without an intermediate box.
+- **Flex** is still the right tool for **1-D flow** that wraps or distributes
+  (e.g. a row of chips, an icon next to a label). Grid is for **2-D placement**
+  and for replacing wrapper-based stacking.
+- **Decorative bits** — separators, dots, bullets, dividers, rules — are
+  `::before`/`::after` pseudo-elements, **never** an empty `<span>`/`<div>`.
+- **One element per meaningful piece of content.** Before adding any wrapper,
+  ask what content it represents; if the answer is "just positioning," delete it
+  and solve it in the grid.
+- Worked example: `.post-row` in `PostList.svelte` is a two-row grid
+  (`"num title date" / "num meta date"`) — `num`/`title`/`meta`/`date` are all
+  direct children placed by area (no stacking wrapper), and the `·` separator is
+  a `.t::before` (no `.dot` element).
+
 ## Color tokens (three tiers)
 
 All colors live in `tokens.css`. Components reference **only tier 2**.
@@ -74,6 +96,21 @@ Tints/translucency via `color-mix(in oklab, var(--role) N%, transparent)`.
   `linear`/`steps()` where semantically needed).
 - **Shadow** `--shadow-sm|·|-md|-lg` — layered, warm-tinted (`--shadow-hsl`),
   single overhead light source; pick by elevation, don't roll your own stack.
+
+## Nesting (native CSS)
+
+- Use **native CSS nesting** to keep a component's rules together: nest
+  `&:hover`/`&.is-active`/`&::before` and structural children inside their parent
+  block instead of repeating the parent selector. It mirrors the markup tree and
+  reads top-down.
+- Don't over-nest: keep it **shallow** (the same low/flat specificity goal — a
+  child or two deep, not a five-level chain). If nesting gets deep, that's a
+  signal to flatten the selector or split the component.
+- `&` is **required** when it changes meaning — compound selectors on the same
+  element (`&:hover`, `&.active`, `&::before`). For a nested **descendant** class,
+  a bare selector (`.num`, `.pmeta`) reads fine and is what we use.
+- Worked example: `PostList.svelte` nests `.num`/`.pt`/`.pmeta`/`.date` (and the
+  `.t::before` separator) inside `.post-row`.
 
 ## Cascade & specificity
 
@@ -127,4 +164,6 @@ root class.
 3. Low, flat specificity? No needless `!important` or `#id`?
 4. No inline `style=""` introduced (CSP)?
 5. For Svelte dynamic classes: `:global()` anchored to the root?
-6. Does `pnpm lint:css` pass?
+6. Did I let grid place direct children (areas/subgrid) and use pseudo-elements
+   for decoration, instead of adding wrapper-only `<div>`/`<span>`s?
+7. Does `pnpm lint:css` pass?
