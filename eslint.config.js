@@ -16,6 +16,15 @@ export default defineConfig([
 
   // Astro components (.astro) — uses astro-eslint-parser under the hood.
   astro.configs.recommended,
+  {
+    files: ['**/*.astro'],
+    languageOptions: {
+      parserOptions: {
+        parser: tseslint.parser,
+        extraFileExtensions: ['.astro'],
+      },
+    },
+  },
 
   // Svelte components (.svelte) — wire up the TS parser for <script lang="ts">.
   svelte.configs.recommended,
