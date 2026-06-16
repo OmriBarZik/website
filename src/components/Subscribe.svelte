@@ -12,7 +12,7 @@
 
 <div class="subscribe">
   <div>
-    <h2>A new guide most weeks.</h2>
+    <h2 class="t-h2">A new guide most weeks.</h2>
     <p>
       No spam, no “10x your career” — just the next deep dive, in your inbox
       when it ships.
@@ -41,47 +41,45 @@
     grid-template-columns: 1fr auto;
     gap: var(--space-400);
     align-items: center;
-  }
 
-  .subscribe h2 {
-    font-weight: 500;
-    font-size: 30px;
-    margin: 0;
-    letter-spacing: -0.01em;
-    color: var(--text-on-invert);
-  }
+    /* font style via .t-h2; keep colour + layout */
+    h2 {
+      margin: 0;
+      color: var(--text-on-invert);
+    }
 
-  .subscribe p {
-    color: color-mix(in oklab, var(--text-on-invert) 75%, transparent);
-    margin: var(--space-100) 0 0;
-    font-size: 16px;
-    max-width: 40ch;
+    p {
+      color: color-mix(in oklab, var(--text-on-invert) 75%, transparent);
+      margin: var(--space-100) 0 0;
+      font-size: var(--fs-base);
+      max-width: 40ch;
+    }
   }
 
   .sub-form {
     display: flex;
     gap: var(--space-100);
-  }
 
-  .sub-form input {
-    font-family: var(--label);
-    font-size: 14px;
-    padding: var(--space-150) var(--space-200);
-    border-radius: var(--radius-100);
-    border: 1px solid
-      color-mix(in oklab, var(--text-on-invert) 16%, transparent);
-    background: color-mix(in oklab, var(--text-on-invert) 8%, transparent);
-    color: var(--code-fg-bright);
-    min-width: 240px;
-    outline: none;
-  }
+    input {
+      font-family: var(--label);
+      font-size: var(--fs-xs);
+      padding: var(--space-150) var(--space-200);
+      border-radius: var(--radius-100);
+      border: 1px solid
+        color-mix(in oklab, var(--text-on-invert) 16%, transparent);
+      background: color-mix(in oklab, var(--text-on-invert) 8%, transparent);
+      color: var(--code-fg-bright);
+      min-width: 240px;
+      outline: none;
 
-  .sub-form input::placeholder {
-    color: color-mix(in oklab, var(--text-on-invert) 55%, transparent);
-  }
+      &::placeholder {
+        color: color-mix(in oklab, var(--text-on-invert) 55%, transparent);
+      }
 
-  .sub-form input:focus {
-    border-color: var(--primary);
+      &:focus {
+        border-color: var(--primary);
+      }
+    }
   }
 
   @media (width <= 900px) {

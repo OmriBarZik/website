@@ -179,28 +179,28 @@
     padding: var(--space-100) var(--space-200);
     background: var(--code-bar);
     border-bottom: 1px solid var(--code-hairline);
-  }
 
-  .tm-bar .d {
-    width: 11px;
-    height: 11px;
-    border-radius: var(--radius-full);
-  }
+    .d {
+      width: 11px;
+      height: 11px;
+      border-radius: var(--radius-full);
+    }
 
-  .tm-bar .fname {
-    margin-left: var(--space-100);
-    font-size: 12px;
-    color: var(--code-fname);
-  }
+    .fname {
+      margin-left: var(--space-100);
+      font-size: var(--fs-2xs);
+      color: var(--code-fname);
+    }
 
-  .tm-bar .sp {
-    flex: 1;
+    .sp {
+      flex: 1;
+    }
   }
 
   .tm-run {
     font-family: var(--label);
-    font-size: 12px;
-    font-weight: 600;
+    font-size: var(--fs-2xs);
+    font-weight: var(--weight-semibold);
     cursor: pointer;
     border-radius: var(--radius-100);
     padding: var(--space-100) var(--space-150);
@@ -211,20 +211,45 @@
     gap: var(--space-100);
     background: var(--code-amber);
     color: var(--code-bg);
-  }
 
-  .tm-run:hover {
-    background: var(--code-amber-strong);
+    &:hover {
+      background: var(--code-amber-strong);
+    }
   }
 
   .tm-body {
     padding: var(--space-200);
-    font-size: 13px;
+    font-size: var(--fs-xs);
     line-height: 1.8;
     color: var(--code-text-dim);
     min-height: 120px;
     max-height: 340px;
     overflow-y: auto;
+
+    /* segment colours are applied via dynamically-set classes */
+    :global(.ok) {
+      color: var(--term-ok);
+    }
+
+    :global(.warn) {
+      color: var(--term-warn);
+    }
+
+    :global(.err) {
+      color: var(--term-err);
+    }
+
+    :global(.muted) {
+      color: var(--term-muted);
+    }
+
+    :global(.cmd) {
+      color: var(--term-cmd);
+    }
+
+    :global(.pre) {
+      color: var(--term-cyan);
+    }
   }
 
   .tm-line {
@@ -232,51 +257,26 @@
     overflow-wrap: break-word;
   }
 
-  /* segment colours are applied via dynamically-set classes */
-  .tm-body :global(.ok) {
-    color: var(--term-ok);
-  }
-
-  .tm-body :global(.warn) {
-    color: var(--term-warn);
-  }
-
-  .tm-body :global(.err) {
-    color: var(--term-err);
-  }
-
-  .tm-body :global(.muted) {
-    color: var(--term-muted);
-  }
-
-  .tm-body :global(.cmd) {
-    color: var(--term-cmd);
-  }
-
-  .tm-body :global(.pre) {
-    color: var(--term-cyan);
-  }
-
   .tm-input {
     display: flex;
     align-items: center;
     gap: var(--space-100);
     padding: 0 var(--space-200) var(--space-200);
-  }
 
-  .tm-input .pre {
-    color: var(--term-cyan);
-    font-size: 13px;
-  }
+    .pre {
+      color: var(--term-cyan);
+      font-size: var(--fs-xs);
+    }
 
-  .tm-input input {
-    flex: 1;
-    background: transparent;
-    border: 0;
-    outline: 0;
-    color: var(--term-cmd);
-    font-family: var(--mono);
-    font-size: 13px;
+    input {
+      flex: 1;
+      background: transparent;
+      border: 0;
+      outline: 0;
+      color: var(--term-cmd);
+      font-family: var(--mono);
+      font-size: var(--fs-xs);
+    }
   }
 
   .blink {

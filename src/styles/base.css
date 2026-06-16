@@ -24,9 +24,29 @@ body {
   background: var(--surface);
   color: var(--text-body);
   font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.6;
+  font-size: var(--fs-base);
+  line-height: var(--leading-normal);
   font-optical-sizing: auto;
+
+  /* decorative radial wash — fixed, behind everything */
+  &::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(
+        900px 520px at 88% -6%,
+        color-mix(in oklab, var(--primary) 5%, transparent),
+        transparent 60%
+      ),
+      radial-gradient(
+        700px 500px at 0% 100%,
+        color-mix(in oklab, var(--secondary) 5%, transparent),
+        transparent 55%
+      );
+  }
 }
 
 ::selection {
@@ -41,26 +61,6 @@ img {
 a {
   color: inherit;
   text-decoration: none;
-}
-
-/* decorative radial wash — fixed, behind everything */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      900px 520px at 88% -6%,
-      color-mix(in oklab, var(--primary) 5%, transparent),
-      transparent 60%
-    ),
-    radial-gradient(
-      700px 500px at 0% 100%,
-      color-mix(in oklab, var(--secondary) 5%, transparent),
-      transparent 55%
-    );
 }
 
 .page {
@@ -83,12 +83,97 @@ body::before {
   font-family: var(--mono);
 }
 
+/* ---------- text styles · semantic roles (size + leading + weight + tracking)
+   The typography system: compose a complete text style by adding one class.
+   Each maps a modular size step to a leading/weight/tracking that suits it.
+   (Generated prose can't take classes — article.css mirrors these on its
+   .prose element selectors using the same tokens.) ---------- */
+.t-display {
+  font-family: var(--serif);
+  font-size: var(--fs-5xl);
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+}
+
+.t-h1 {
+  font-family: var(--serif);
+  font-size: var(--fs-4xl);
+  line-height: var(--leading-tight);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-tight);
+}
+
+.t-h2 {
+  font-family: var(--serif);
+  font-size: var(--fs-3xl);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+}
+
+.t-h3 {
+  font-family: var(--serif);
+  font-size: var(--fs-2xl);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+}
+
+.t-h4 {
+  font-family: var(--label);
+  font-size: var(--fs-xl);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-snug);
+}
+
+.t-title {
+  font-family: var(--serif);
+  font-size: var(--fs-lg);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+}
+
+.t-lead {
+  font-family: var(--serif);
+  font-size: var(--fs-lg);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+}
+
+.t-body {
+  font-family: var(--serif);
+  font-size: var(--fs-md);
+  line-height: var(--leading-relaxed);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+}
+
+.t-base {
+  font-family: var(--serif);
+  font-size: var(--fs-base);
+  line-height: var(--leading-normal);
+  font-weight: var(--weight-regular);
+  letter-spacing: var(--tracking-normal);
+}
+
+.t-caption {
+  font-family: var(--label);
+  font-size: var(--fs-xs);
+  line-height: var(--leading-snug);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-normal);
+}
+
 .kicker {
   font-family: var(--label);
   text-transform: uppercase;
-  letter-spacing: 0.2em;
-  font-size: 11px;
-  font-weight: 600;
+  letter-spacing: var(--tracking-widest);
+  font-size: var(--fs-2xs);
+  font-weight: var(--weight-semibold);
   color: var(--primary);
 }
 
@@ -102,15 +187,15 @@ body::before {
 /* ---------- brand wordmark (header + footer) ---------- */
 .brand {
   font-family: var(--label);
-  font-weight: 700;
-  font-size: 21px;
-  letter-spacing: -0.02em;
+  font-weight: var(--weight-bold);
+  font-size: var(--fs-md);
+  letter-spacing: var(--tracking-tight);
   display: inline-flex;
   align-items: baseline;
-}
 
-.brand .dot {
-  color: var(--primary);
+  .dot {
+    color: var(--primary);
+  }
 }
 
 /* ---------- circular icon button (header + TOC share) ---------- */
@@ -124,18 +209,18 @@ body::before {
   place-items: center;
   cursor: pointer;
   color: var(--text-soft);
-}
 
-.icon-btn:hover {
-  border-color: var(--text-body);
-  color: var(--text-body);
+  &:hover {
+    border-color: var(--text-body);
+    color: var(--text-body);
+  }
 }
 
 /* ---------- buttons ---------- */
 .btn {
   font-family: var(--label);
-  font-size: 14px;
-  font-weight: 600;
+  font-size: var(--fs-xs);
+  font-weight: var(--weight-semibold);
   padding: var(--space-150) var(--space-200);
   border-radius: var(--radius-100);
   border: 1px solid transparent;
@@ -152,53 +237,53 @@ body::before {
   color: var(--text-body);
   line-height: 1;
   white-space: nowrap;
-}
 
-.btn:active {
-  transform: translateY(1px);
+  &:active {
+    transform: translateY(1px);
+  }
+
+  .arr {
+    transition: transform var(--duration-normal) var(--ease);
+  }
+
+  &:hover .arr {
+    transform: translateX(3px);
+  }
 }
 
 .btn-primary {
   background: var(--primary);
   color: var(--text-on-primary);
-}
 
-.btn-primary:hover {
-  background: var(--primary-strong);
+  &:hover {
+    background: var(--primary-strong);
+  }
 }
 
 .btn-ghost {
   border-color: var(--border-strong);
   color: var(--text-body);
   background: var(--surface-raised);
-}
 
-.btn-ghost:hover {
-  border-color: var(--text-body);
+  &:hover {
+    border-color: var(--text-body);
+  }
 }
 
 .btn-text {
   padding: 0;
   color: var(--text-link);
-}
 
-.btn-text:hover {
-  color: var(--text-link-hover);
-}
-
-.btn .arr {
-  transition: transform var(--duration-normal) var(--ease);
-}
-
-.btn:hover .arr {
-  transform: translateX(3px);
+  &:hover {
+    color: var(--text-link-hover);
+  }
 }
 
 /* ---------- tags ---------- */
 .tag {
   font-family: var(--label);
-  font-size: 11.5px;
-  font-weight: 500;
+  font-size: var(--fs-2xs);
+  font-weight: var(--weight-medium);
   padding: var(--space-50) var(--space-150);
   border-radius: var(--radius-pill);
   border: 1px solid var(--border-strong);
@@ -208,23 +293,24 @@ body::before {
   transition:
     color var(--duration-normal) var(--ease),
     border-color var(--duration-normal) var(--ease);
-}
 
-a.tag:hover {
-  color: var(--text-link);
-  border-color: var(--text-link);
-}
+  /* only anchor tags get the link-coloured hover */
+  a&:hover {
+    color: var(--text-link);
+    border-color: var(--text-link);
+  }
 
-.tag.is-ts {
-  color: var(--topic-ts);
-}
+  &.is-ts {
+    color: var(--topic-ts);
+  }
 
-.tag.is-docker {
-  color: var(--topic-docker);
-}
+  &.is-docker {
+    color: var(--topic-docker);
+  }
 
-.tag.is-node {
-  color: var(--topic-node);
+  &.is-node {
+    color: var(--topic-node);
+  }
 }
 
 /* ---------- image placeholder (warm diagonal-stripe block) ---------- */
@@ -238,26 +324,26 @@ a.tag:hover {
     linear-gradient(135deg, var(--surface-sunken), var(--border-strong));
   display: grid;
   place-items: center;
-}
 
-.ph.r-16-8 {
-  aspect-ratio: 16 / 8;
-}
+  &.r-16-8 {
+    aspect-ratio: 16 / 8;
+  }
 
-.ph.r-16-9 {
-  aspect-ratio: 16 / 9;
-}
+  &.r-16-9 {
+    aspect-ratio: 16 / 9;
+  }
 
-.ph.r-21-9 {
-  aspect-ratio: 21 / 9;
-}
+  &.r-21-9 {
+    aspect-ratio: 21 / 9;
+  }
 
-.ph.r-4-3 {
-  aspect-ratio: 4 / 3;
-}
+  &.r-4-3 {
+    aspect-ratio: 4 / 3;
+  }
 
-.ph.r-1-1 {
-  aspect-ratio: 1 / 1;
+  &.r-1-1 {
+    aspect-ratio: 1 / 1;
+  }
 }
 
 /* ---------- traffic-light dots (code widgets + code block) ---------- */

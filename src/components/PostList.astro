@@ -8,26 +8,29 @@ interface Props {
 }
 const { posts } = Astro.props;
 
-const topicClass = (topic: string) =>
-  topic === 'TypeScript'
+const topicClass = (topic: string) => {
+  return topic === 'TypeScript'
     ? 'is-ts'
     : topic === 'Docker'
       ? 'is-docker'
       : 'is-node';
-const fmtDate = (d: Date) =>
-  d.toLocaleDateString('en-us', {
+};
+
+const fmtDate = (date: Date) => {
+  return date.toLocaleDateString('en-us', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
   });
+};
 
-const data = posts.map((p) => ({
-  href: `/blog/${p.id}/`,
-  title: p.data.title,
-  topic: p.data.topic,
-  topicClass: topicClass(p.data.topic),
-  readingTime: p.data.readingTime,
-  date: fmtDate(p.data.pubDate),
+const data = posts.map((post) => ({
+  href: `/blog/${post.id}/`,
+  title: post.data.title,
+  topic: post.data.topic,
+  topicClass: topicClass(post.data.topic),
+  readingTime: post.data.readingTime,
+  date: fmtDate(post.data.pubDate),
 }));
 ---
 

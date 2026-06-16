@@ -59,8 +59,10 @@ const dockerTerminal = {
     <div class="hero-grid">
       <div>
         <span class="kicker">The notebook of a backend engineer</span>
-        <h1>Writing about the things that <em>actually</em> ship.</h1>
-        <p class="lede">
+        <h1 class="t-display">
+          Writing about the things that <em>actually</em> ship.
+        </h1>
+        <p class="lede t-lead">
           Slow, careful guides on TypeScript, Docker and Node.js — every example
           runs in a sandbox right here on the page. No setup, no “it works on my
           machine.”
@@ -152,12 +154,6 @@ const dockerTerminal = {
 </BaseLayout>
 
 <style>
-  /* hero */
-  .hero {
-    padding-top: var(--space-800);
-    padding-bottom: var(--space-700);
-  }
-
   .hero-grid {
     display: grid;
     grid-template-columns: 1.15fr 0.85fr;
@@ -165,48 +161,50 @@ const dockerTerminal = {
     align-items: center;
   }
 
-  .hero h1 {
-    font-weight: 500;
-    font-size: 60px;
-    line-height: 1.02;
-    letter-spacing: -0.02em;
-    margin: var(--space-200) 0 0;
-    text-wrap: balance;
-  }
+  /* hero */
+  .hero {
+    padding-top: var(--space-800);
+    padding-bottom: var(--space-700);
 
-  .hero h1 em {
-    font-style: italic;
-    color: var(--primary);
-  }
+    /* font style via .t-display; keep layout only */
+    h1 {
+      margin: var(--space-200) 0 0;
+      text-wrap: balance;
 
-  .hero .lede {
-    font-size: 20px;
-    color: var(--text-soft);
-    line-height: 1.5;
-    margin: var(--space-300) 0 0;
-    max-width: 30em;
-  }
+      em {
+        font-style: italic;
+        color: var(--primary);
+      }
+    }
 
-  .hero .cta-row {
-    display: flex;
-    gap: var(--space-150);
-    margin-top: var(--space-400);
-    align-items: center;
-  }
+    /* size/leading via .t-lead; keep colour + layout */
+    .lede {
+      color: var(--text-soft);
+      margin: var(--space-300) 0 0;
+      max-width: 30em;
+    }
 
-  .hero .by {
-    display: flex;
-    align-items: center;
-    gap: var(--space-150);
-    margin-top: var(--space-400);
-    color: var(--text-muted);
-    font-family: var(--label);
-    font-size: 13px;
-  }
+    .cta-row {
+      display: flex;
+      gap: var(--space-150);
+      margin-top: var(--space-400);
+      align-items: center;
+    }
 
-  .hero .by .cwd {
-    color: var(--primary);
-    font-size: 12px;
+    .by {
+      display: flex;
+      align-items: center;
+      gap: var(--space-150);
+      margin-top: var(--space-400);
+      color: var(--text-muted);
+      font-family: var(--label);
+      font-size: var(--fs-xs);
+
+      .cwd {
+        color: var(--primary);
+        font-size: var(--fs-2xs);
+      }
+    }
   }
 
   /* interactive showcase */
@@ -240,7 +238,7 @@ const dockerTerminal = {
     }
 
     .hero h1 {
-      font-size: 46px;
+      font-size: var(--fs-4xl);
     }
 
     .demo-grid {

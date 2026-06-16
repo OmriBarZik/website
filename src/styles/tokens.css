@@ -155,6 +155,49 @@
   --radius-pill: 100px; /* chips / tags */
   --radius-full: 50%; /* dots / icon buttons */
 
+  /* ---------- type · the four axes of a text style ----------
+	   A text style = size + line-height + weight + tracking, composed by the
+	   semantic .t-* classes in base.css (the article's "minimum coverage").
+	   Pick a .t-* role in markup; reach for these primitives only when a role
+	   needs one axis tweaked, or inside the per-template prose rules. */
+
+  /* font-size · strict Minor Third modular scale. Every step derives from
+	   --fs-base × --fs-ratio via chained calc(), so editing just the base or
+	   the ratio rescales the whole ladder. rem base keeps it relative to the
+	   user's root font-size (accessibility). px comments are the 16px default. */
+  --fs-ratio: 1.2; /* Minor Third */
+  --fs-base: 1rem; /* 16px — body base */
+  --fs-xs: calc(var(--fs-base) / var(--fs-ratio)); /* 13.3px */
+  --fs-2xs: calc(var(--fs-xs) / var(--fs-ratio)); /* 11.1px */
+  --fs-md: calc(var(--fs-base) * var(--fs-ratio)); /* 19.2px */
+  --fs-lg: calc(var(--fs-md) * var(--fs-ratio)); /* 23px */
+  --fs-xl: calc(var(--fs-lg) * var(--fs-ratio)); /* 27.6px */
+  --fs-2xl: calc(var(--fs-xl) * var(--fs-ratio)); /* 33.2px */
+  --fs-3xl: calc(var(--fs-2xl) * var(--fs-ratio)); /* 39.8px */
+  --fs-4xl: calc(var(--fs-3xl) * var(--fs-ratio)); /* 47.8px */
+  --fs-5xl: calc(var(--fs-4xl) * var(--fs-ratio)); /* 57.3px */
+
+  /* line-height · unitless. Headings tight, body ≥ 1.5 (WCAG). */
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+
+  /* font-weight */
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* letter-spacing · large text tighter, small/uppercase looser. */
+  --tracking-tight: -0.02em;
+  --tracking-snug: -0.01em;
+  --tracking-normal: 0em;
+  --tracking-wide: 0.08em;
+  --tracking-wider: 0.14em;
+  --tracking-widest: 0.2em;
+
   /* ---------- motion ---------- */
   --duration-fast: 120ms; /* button press / transforms     */
   --duration-normal: 150ms; /* colour & border hovers        */

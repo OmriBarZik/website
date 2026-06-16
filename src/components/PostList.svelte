@@ -44,7 +44,7 @@
     {#if active === 'all' || post.topic === active}
       <a class="post-row" href={post.href}>
         <span class="num">{String(i + 1).padStart(2, '0')}</span>
-        <span class="pt">{post.title}</span>
+        <span class="pt t-title">{post.title}</span>
         <span class="pmeta">
           <span class="tag {post.topicClass}">{post.topic}</span>
           <span class="t">{post.readingTime}</span>
@@ -65,8 +65,8 @@
 
   .chip {
     font-family: var(--label);
-    font-size: 13px;
-    font-weight: 500;
+    font-size: var(--fs-xs);
+    font-weight: var(--weight-medium);
     cursor: pointer;
     padding: var(--space-100) var(--space-200);
     border-radius: var(--radius-pill);
@@ -114,16 +114,13 @@
       grid-area: num;
       align-self: baseline;
       font-family: var(--mono);
-      font-size: 13px;
+      font-size: var(--fs-xs);
       color: var(--primary);
     }
 
+    /* font style via .t-title; keep grid placement only */
     .pt {
       grid-area: title;
-      font-weight: 500;
-      font-size: 23px;
-      line-height: 1.2;
-      letter-spacing: -0.01em;
     }
 
     .pmeta {
@@ -134,13 +131,12 @@
       margin-top: var(--space-100);
 
       .tag {
-        font-size: 11px;
         padding: 2px var(--space-100);
       }
 
       .t {
         font-family: var(--mono);
-        font-size: 11.5px;
+        font-size: var(--fs-2xs);
         color: var(--text-muted);
         white-space: nowrap;
 
@@ -161,7 +157,7 @@
       grid-area: date;
       align-self: baseline;
       font-family: var(--mono);
-      font-size: 12px;
+      font-size: var(--fs-2xs);
       color: var(--text-faint);
       white-space: nowrap;
       text-align: right;

@@ -24,7 +24,7 @@ const { title, description, pubDate, topic, readingTime, heroImage } =
     <div class="eyebrow">
       ★ Latest&nbsp;&nbsp;·&nbsp;&nbsp;<span class="topic">{topic}</span>
     </div>
-    <h3>{title}</h3>
+    <h3 class="t-title">{title}</h3>
     <p set:html={mdInline(description)} />
     <div class="meta">
       <span><FormattedDate date={pubDate} /></span>
@@ -43,19 +43,19 @@ const { title, description, pubDate, topic, readingTime, heroImage } =
     transition:
       transform var(--duration-normal) var(--ease),
       box-shadow var(--duration-normal) var(--ease);
-  }
 
-  .feat-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-lg);
-  }
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-lg);
+    }
 
-  /* :global(img) — the cover is an <Image> child component */
-  .feat-card .ph,
-  .feat-card :global(img) {
-    aspect-ratio: 16 / 10;
-    width: 100%;
-    object-fit: cover;
+    /* :global(img) — the cover is an <Image> child component */
+    .ph,
+    :global(img) {
+      aspect-ratio: 16 / 10;
+      width: 100%;
+      object-fit: cover;
+    }
   }
 
   .body {
@@ -67,34 +67,31 @@ const { title, description, pubDate, topic, readingTime, heroImage } =
     align-items: center;
     gap: var(--space-100);
     font-family: var(--label);
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
+    font-size: var(--fs-2xs);
+    letter-spacing: var(--tracking-wide);
     color: var(--primary);
-    font-weight: 600;
+    font-weight: var(--weight-semibold);
     white-space: nowrap;
+
+    .topic {
+      color: var(--text-muted);
+    }
   }
 
-  .eyebrow .topic {
-    color: var(--text-muted);
-  }
-
+  /* font style via .t-title; keep layout only */
   h3 {
-    font-weight: 500;
-    font-size: 25px;
-    line-height: 1.15;
     margin: var(--space-150) 0 0;
-    letter-spacing: -0.01em;
   }
 
   p {
     color: var(--text-muted);
-    font-size: 16px;
+    font-size: var(--fs-base);
     margin: var(--space-100) 0 0;
   }
 
   .meta {
     font-family: var(--mono);
-    font-size: 11.5px;
+    font-size: var(--fs-2xs);
     color: var(--text-faint);
     margin-top: var(--space-200);
     display: flex;

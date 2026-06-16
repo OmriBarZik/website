@@ -86,8 +86,8 @@ const progressGlyph = series
         )
       }
 
-      <h1>{title}</h1>
-      <p class="standfirst" set:html={mdInline(description)} />
+      <h1 class="t-h1">{title}</h1>
+      <p class="standfirst t-lead" set:html={mdInline(description)} />
 
       <div class="art-meta">
         <span class="stat"><FormattedDate date={pubDate} /></span>
@@ -123,7 +123,7 @@ const progressGlyph = series
               {prev ? (
                 <a href={prev.href}>
                   <div class="dir">{prev.label}</div>
-                  <div class="pt">{prev.title}</div>
+                  <div class="pt t-title">{prev.title}</div>
                 </a>
               ) : (
                 <span />
@@ -131,7 +131,7 @@ const progressGlyph = series
               {next ? (
                 <a href={next.href} class="next">
                   <div class="dir">{next.label}</div>
-                  <div class="pt">{next.title}</div>
+                  <div class="pt t-title">{next.title}</div>
                 </a>
               ) : (
                 <span />
